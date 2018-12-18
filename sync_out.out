@@ -1,10 +1,7 @@
-sync_out started on Fri Jul 20 13:52:43 CEST 2018:
- rsync -aq output/ /store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/test
+sync_out started on Tue Dec 18 13:11:49 CET 2018:
+ rsync -aq output/lm_c /store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/test/
 
-sync_out started on Fri Jul 20 13:52:43 CEST 2018:
- rsync -aq output/ /store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/test
+sync_out finished on Tue Dec 18 13:11:49 CET 2018
 
-sync_out finished on Fri Jul 20 13:52:43 CEST 2018
-
-sync_out finished on Fri Jul 20 13:52:43 CEST 2018
+sync_out finished on Tue Dec 18 13:12:50 CET 2018
 

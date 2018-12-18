@@ -46,24 +46,24 @@ export NPY_LM2LM=10
 export NPIO_LM2LM=0
 export EXE_LM2LM="./int2lm"
 
-export NPX_LMF=10
-export NPY_LMF=10
+export NPX_LMF=5
+export NPY_LMF=5
 export NPIO_LMF=4
 export EXE_LMF="./lm_f90"
 
 # Configure Simulation
-export LM_YYYY_INI=2005
+export LM_YYYY_INI=2006
 export LM_MM_INI=09
-export LM_DD_INI=10
+export LM_DD_INI=01
 export LM_ZZ_INI=00
 
-export LM_YYYY_BEGIN=2005
+export LM_YYYY_BEGIN=2006
 export LM_MM_BEGIN=09
-export LM_DD_BEGIN=${LM_DD_INI}
+export LM_DD_INI=01
 export LM_ZZ_BEGIN=${LM_ZZ_INI}
 
-export LM_NL_HSTART=0
-export LM_NL_HSTOP=24
+export LM_NL_HSTART=24
+export LM_NL_HSTOP=48
 
 export FRONTS_TS_START=2006060100
 export FRONTS_TS_END=2006060200
@@ -74,6 +74,7 @@ lmfid=""
 pwd
 #parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f 5_trajectories 6_climate_analysis 7_msd 8_front_tracking"
 parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f"
+parts="3_lm2lm 4_lm_f"
 #parts="2_lm_c"
 #parts="1_ifs2lm 2_lm_c"
 #parts="0_get_data 1_ifs2lm 2_lm_c"

@@ -55,8 +55,8 @@ if [ ! -f ../1_ifs2lm/$extpar_file_lm_c ] ; then /bin/cp $extpar_dir/$extpar_fil
 if [ ! -f ../3_lm2lm/$extpar_file_lm_f  ] ; then /bin/cp $extpar_dir/$extpar_file_lm_f ../3_lm2lm/  ; fi
 
 
-tar -xzvf $bd_data_prev -C output --transform 's/caf/cas/'
 tar -xzvf $bd_data -C output --transform 's/caf/cas/'
+tar -xzvf $bd_data_prev -C output --transform 's/caf/cas/'
 tar -xzvf $bd_data_next -C output --transform 's/caf/cas/'
 
 #ssh ela 'sleep 20 &&ls>test_ls &'

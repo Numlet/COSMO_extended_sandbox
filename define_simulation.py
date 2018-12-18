@@ -39,7 +39,7 @@ LM_DD_END_CHAIN='03'
 LM_ZZ_END_CHAIN='00'
 
 
-main_simulation_step='2_lm_c'
+main_simulation_step='4_lm_f'
 
 d_ini=datetime.datetime(int(LM_YYYY_INI),int(LM_MM_INI),int(LM_DD_INI),int(LM_ZZ_INI))
 

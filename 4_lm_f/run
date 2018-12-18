@@ -142,7 +142,7 @@ cat > INPUT_IO <<EOF_IO
  &GRIBOUT
   yform_write='ncdf',
   hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,1,
-  yvarml='CLCT','CLCH','CLCM','CLCL','ASHFL_S','ALHFL_S','ASOB_S','ASOB_T','ATHB_T','ALWU_S','ASWDIFU_S','ALB_RAD','ATHB_S','ASWD_S'
+  yvarml='CLCT','CLCH','CLCM','CLCL','ASHFL_S','ALHFL_S','ASOB_S','ASOB_T','ATHB_T','ALWU_S','ASWDIFU_S','ALB_RAD','ATHB_S','ASWD_S','LWU_S','AEVAP_S'
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
@@ -169,7 +169,7 @@ cat > INPUT_IO <<EOF_IO
  &GRIBOUT
   yform_write='ncdf',
   hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,1,
-  yvarml='QCVG_CON','TOT_PREC','TOT_PR','TOT_SNOW','PRR_GSP','PRS_GSP','PRR_CON','PRS_CON','U_10M', 'V_10M', 'T_2M', 'T_G', 'RELHUM_2M', 'PS', 'RAIN_GSP', 'RAIN_CON', 'SNOW_CON','SNOW_GSP','TQC','TQI'
+  yvarml= 'VMAX_10M','QV_2M','QCVG_CON','TOT_PREC','TOT_PR','TOT_SNOW','U_10M', 'V_10M', 'T_2M', 'T_G', 'RELHUM_2M', 'PS', 'TQC','TQI','TQV','CAPE_ML','CIN_ML','HPBL','RUNOFF_S', 'RUNOFF_G'
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
@@ -227,7 +227,7 @@ cat > INPUT_IO <<EOF_IO
  &GRIBOUT
   yform_write='ncdf',
   hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,24,
-  yvarml='VMAX_10M', 'VABSMX_10M','T_SO','H_SNOW','W_SO', 'W_SNOW', 'TMIN_2M', 'TMAX_2M', 'RUNOFF_S', 'RUNOFF_G',
+  yvarml='VMAX_10M', 'VABSMX_10M','T_SO','H_SNOW','W_SO', 'W_SNOW','TMIN_2M', 'TMAX_2M', 'RUNOFF_S', 'RUNOFF_G'
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
@@ -255,13 +255,13 @@ cat > INPUT_IO <<EOF_IO
 EOF_IO
 cat > INPUT_ORG <<EOF_ORG
  &LMGRID
-  startlat_tot  = -14.86,
-  startlon_tot  = -18.86,
+  startlat_tot  = -9.30,
+  startlon_tot  = -9.30,
   pollat = 43.0,
   pollon = -170.0,
   dlon = 0.02,
   dlat = 0.02,
-  ie_tot=1542, je_tot=1542, ke_tot=60,
+  ie_tot=801, je_tot=801, ke_tot=60,
  /END
  &RUNCTL
   dt=20.0,
@@ -354,7 +354,7 @@ cat > INPUT_PHY <<EOF_PHY
       itype_hydmod=1,
       itype_hydcond=1,
       lsoil_init_fill=.TRUE.,  ! Saturate low soil levels; Use only in first month of simualtion
-    lconv=.TRUE.,
+    lconv=.FALSE.,
       itype_conv=3,
       nincconv=10,
     lcape=.false.,
@@ -444,7 +444,7 @@ EOF_job
 if [ -z "${WAITFORJOB}" ]; then
   jobid=`sbatch -C gpu job | sed 's/Submitted batch job //g'`
 else
-  jobid=`sbatch -C gpu --dependency=afterok:${WAITFORJOB} job | sed 's/Submitted batch job //g'`
+  jobid=`sbatch -C gpu --dependency=after:${WAITFORJOB} job | sed 's/Submitted batch job //g'`
 fi
 
 if [ $? -eq 0 -a -n "${jobid}" ]; then

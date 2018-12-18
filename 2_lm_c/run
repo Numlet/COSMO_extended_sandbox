@@ -107,7 +107,7 @@ EOF_INI
 cat > INPUT_IO <<EOF_IO
  &IOCTL
   yform_read='ncdf',
-  ngribout = 7,
+  ngribout = 9,
   nhour_restart=${LM_NL_HSTOP},${LM_NL_HSTOP},1
   ytunit_restart = 'd',
   ldwd_grib_use=.false.,
@@ -138,22 +138,37 @@ cat > INPUT_IO <<EOF_IO
   hnewbcdt=3.0,
   ytunitbd='d',
  /END
-&GRIBOUT
+ &GRIBOUT
   yform_write='ncdf',
-  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
-  yvarml='CLCT','CLCH','CLCM','CLCL','ASHFL_S','ALHFL_S','ASOB_S','ASOB_T','ATHB_T','ALWU_S','ASWDIFU_S','ALB_RAD','ATHB_S','ASWD_S'
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,1,
+  yvarml='CLCT','CLCH','CLCM','CLCL','ASHFL_S','ALHFL_S','ASOB_S','ASOB_T','ATHB_T','ALWU_S','ASWDIFU_S','ALB_RAD','ATHB_S','ASWD_S','LWU_S','AEVAP_S'
   yvarpl=' ',
   yvarzl=' ',
-  lcheck=.FALSE.,
+  lcheck=.TRUE.,
   luvmasspoint=.FALSE.,
-  lwrite_const=.False.,
+  lwrite_const=.TRUE.,
   ydir='./output/1h_second',
+  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
+  l_fi_pmsl_smooth =.FALSE.,
   ytunit='d',
- /END
+ /END 
  &GRIBOUT
   yform_write='ncdf',
   hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
-  yvarml='QCVG_CON','TOT_PREC','TOT_PR','U_10M', 'V_10M', 'T_2M', 'T_G', 'RELHUM_2M', 'PS','TQC','TQI'
+  yvarml=' ',
+  yvarpl=' ',
+  yvarzl='U','V',
+  zlev=100,
+  lcheck=.FALSE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.False.,
+  ydir='./output/1h_100m',
+  ytunit='d',
+ /END
+&GRIBOUT
+  yform_write='ncdf',
+  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
+  yvarml= 'VMAX_10M','QV_2M','QCVG_CON','TOT_PREC','TOT_PR','TOT_SNOW','U_10M', 'V_10M', 'T_2M', 'T_G', 'RELHUM_2M', 'PS', 'TQC','TQI','TQV','CAPE_ML','CIN_ML','HPBL','RUNOFF_S', 'RUNOFF_G'
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
@@ -197,7 +212,7 @@ cat > INPUT_IO <<EOF_IO
  &GRIBOUT
   yform_write='ncdf',
   hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},3,
-  yvarml='VMAX_10M', 'PMSL', 'TQV',
+  yvarml='VMAX_10M','PMSL', 'TQV', 'TWATER', 'TWATFLXU', 'TWATFLXV'
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
@@ -421,8 +436,8 @@ pwd
 cd ..
 #python control_simulation.py
 #./run_daint.sh
-cd x_chain
-./run SLURM DEBUG pr04 chaining
+#cd x_chain
+#./run SLURM DEBUG pr04 chaining
 
 EOF_job
 

@@ -118,7 +118,7 @@ cat > INPUT <<EOF
   czml_soil_in=0.005, 0.025, 0.07, 0.16, 0.34, 0.70, 1.47, 2.86, 5.74, 11.50,
  /
  &LMGRID
-  ielm_tot=1542, jelm_tot=1542, kelm_tot=60,
+  ielm_tot=801, jelm_tot=801, kelm_tot=60,
   ivctype=2, vcflat = 11357.0,
   ke_soil_lm=9, irefatm=2,
   czml_soil_lm=0.005, 0.025, 0.07, 0.16, 0.34, 0.70, 1.47, 2.86, 5.74,  11.50,
@@ -136,8 +136,8 @@ cat > INPUT <<EOF
        197.67,     137.23,      87.33,      48.44,      20.00,       0.00,
   pollat = 43.0 , pollon = -170.0,
   dlon=0.02, dlat=0.02,
-  startlat_tot  = -14.86,
-  startlon_tot  = -18.86,
+  startlat_tot  = -9.30,
+  startlon_tot  = -9.30,
  /
  &DATABASE
  /
