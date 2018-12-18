@@ -1,0 +1,3 @@
+#!/bin/bash
+
+\rm -rf YU* fort.* M_* core script_*.grc stdeo_*.grc grc.nqs

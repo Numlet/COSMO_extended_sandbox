@@ -1,0 +1,7 @@
+import os
+
+if os.path.exists('/scratch/snx3000/jvergara/cosmo-pompa_sandbox_chain/cosmo/test/climate/crClim2km_DVL/do'):
+	os.chdir('/scratch/snx3000/jvergara/cosmo-pompa_sandbox_chain/cosmo/test/climate/crClim2km_DVL/')
+	os.system('./run_daint.sh')
+	os.system('rm /scratch/snx3000/jvergara/cosmo-pompa_sandbox_chain/cosmo/test/climate/crClim2km_DVL/do')
+

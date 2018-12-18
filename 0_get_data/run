@@ -1,0 +1,92 @@
+#!/bin/bash
+
+
+
+bd_data=/project/pr04/ERAinterim/${LM_YYYY_BEGIN}/ERAINT_${LM_YYYY_BEGIN}_${LM_MM_BEGIN}.tar.gz
+next_date=$(date -d "${LM_YYYY_BEGIN}-${LM_MM_BEGIN}-01 1 month" +%Y-%m-%d )
+
+echo ${LM_YYYY_BEGIN}_${LM_MM_BEGIN}
+echo $next_date
+
+LM_YYYY_NEXT=$(echo $next_date |colrm 5)
+LM_MM_NEXT=$(echo $next_date |colrm 8| tail -c 3)
+echo $LM_YYYY_NEXT
+echo $LM_MM_NEXT
+bd_data_next=/project/pr04/ERAinterim/${LM_YYYY_NEXT}/ERAINT_${LM_YYYY_NEXT}_${LM_MM_NEXT}.tar.gz
+
+
+
+
+
+prev_date=$(date -d "${LM_YYYY_BEGIN}-${LM_MM_BEGIN}-01 -1 month" +%Y-%m-%d )
+
+echo ${LM_YYYY_BEGIN}_${LM_MM_BEGIN}
+echo $prev_date
+
+LM_YYYY_PREV=$(echo $prev_date |colrm 5)
+LM_MM_PREV=$(echo $prev_date |colrm 8| tail -c 3)
+echo $LM_YYYY_PREV
+echo $LM_MM_PREV
+bd_data_prev=/project/pr04/ERAinterim/${LM_YYYY_PREV}/ERAINT_${LM_YYYY_PREV}_${LM_MM_PREV}.tar.gz
+
+echo $bd_data
+echo $bd_data_next
+echo $bd_data_prev
+#External Parameters
+extpar_dir=/project/pr04/extpar-HPC
+extpar_file_lm_c=extpar_12km_europe_771x771.nc
+extpar_file_lm_f=extpar_2km_europe_2313x2313.nc
+
+cat > job <<EOF_job
+#!/bin/bash -l
+#
+#SBATCH --job-name=get_data
+#SBATCH --output=job.out
+#SBATCH --time=01:00:00
+#SBATCH --ntasks=1
+#SBATCH --partition=normal
+module unload xalt
+
+#Create Output directory
+if [ ! -d ../input/ifs2lm ] ; then mkdir -p ../input/ifs2lm ; fi
+
+#Copy External Parameters
+if [ ! -f ../1_ifs2lm/$extpar_file_lm_c ] ; then /bin/cp $extpar_dir/$extpar_file_lm_c ../1_ifs2lm/ ; fi
+if [ ! -f ../3_lm2lm/$extpar_file_lm_f  ] ; then /bin/cp $extpar_dir/$extpar_file_lm_f ../3_lm2lm/  ; fi
+
+
+tar -xzvf $bd_data_prev -C output --transform 's/caf/cas/'
+tar -xzvf $bd_data -C output --transform 's/caf/cas/'
+tar -xzvf $bd_data_next -C output --transform 's/caf/cas/'
+
+#ssh ela 'sleep 20 &&ls>test_ls &'
+
+pwd
+cd ..
+#if [-f do]
+#then
+#    ./run_daint.sh
+#    rm do
+#fi
+
+#./run_daint.sh
+EOF_job
+
+#On daint use xfer queue
+if [[ $HOST == daint* ]]; then
+  sed -i '/#SBATCH --partition=normal/c\#SBATCH  --partition=xfer' job
+fi
+
+# clean away old *.out files
+\rm -f *.out 2>/dev/null
+chmod u+x job
+# submit job
+jobid=`sbatch -C gpu -n 1 job | sed 's/Submitted batch job //g'`
+
+if [ $? -eq 0 -a -n "${jobid}" ]; then
+  echo "${jobid}" > .jobid
+  echo "${jobid}"
+else
+  exit 1
+fi
+

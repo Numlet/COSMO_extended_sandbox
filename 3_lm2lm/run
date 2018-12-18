@@ -1,0 +1,238 @@
+#!/bin/bash
+
+# setup defaults
+if [ -z "${NPX_LM2LM}" ]; then
+  NPX=3
+else
+  NPX=${NPX_LM2LM}
+fi
+if [ -z "${NPY_LM2LM}" ]; then
+  NPY=7
+else
+  NPY=${NPY_LM2LM}
+fi
+if [ -z "${NPIO_LM2LM}" ]; then
+  NPIO=1
+else
+  NPIO=${NPIO_LM2LM}
+fi
+if [ -z "${EXE_LM2LM}" ]; then
+  EXE=int2lm
+else
+  EXE=${EXE_LM2LM}
+fi
+if [ -z "$1" ]; then
+  SCHEDULER="SLURM"
+else
+  SCHEDULER="$1"
+fi
+if [ -z "$2" ]; then
+  QUEUE="normal"
+else
+  QUEUE="$2"
+fi
+if [ -z "$3" ]; then
+  ACCOUNT="ch4"
+else
+  ACCOUNT="$3"
+fi
+if [ -z "$4" ]; then
+  WAITFORJOB=""
+else
+  WAITFORJOB="$4"
+fi
+HOST=`hostname | sed 's/\..*$//g' | sed 's/[0-9]*$//g'`
+
+# check scheduler
+if [ "${SCHEDULER}" != "SLURM" ]; then
+  echo "ERROR: unsupported scheduler (${SCHEDULER})"
+  exit 1
+fi
+
+# compute derived variables
+NTASKS=`echo "${NPX}"'*'"${NPY}"'+'"${NPIO}" | bc`
+
+# cleanup
+if [ -f .jobid ]; then
+  $(squeue -j `cat .jobid` &>/dev/null) && scancel `cat .jobid`
+  sleep 3
+  \rm .jobid 2>/dev/null
+fi
+./clean
+
+# setup namelists
+cat > INPUT <<EOF
+  &CONTRL
+    lmixcld=.false.,
+    yinput_model = 'COSMO'
+    hincbound=1.0,
+    hstart=${LM_NL_HSTART},
+    hstop=${LM_NL_HSTOP},
+    linitial = .TRUE.,
+    idbg_level=3,
+    luse_t_skin=.TRUE.,
+    nincwait=30,
+    nmaxwait=60,
+    lboundaries=.true.,
+    lprog_qi=.true.,
+    lprog_qr_qs=.true.,
+    lprog_rho_snow=.false.,
+    lmulti_layer_in=.true.,
+    lmulti_layer_lm=.true.,
+    itype_w_so_rel=1,
+    lforest=.TRUE., lsso=.TRUE.,
+    lvertwind_ini=.true.,
+    lvertwind_bd=.false.,
+    llbc_smooth=.true.,
+    lfilter_pp=.true.,
+    lfilter_oro=.false.,
+      ilow_pass_oro=4,
+        numfilt_oro=1,
+        ilow_pass_xso=5,
+          lxso_first=.FALSE.,
+          numfilt_xso=1,
+          rxso_mask=750.0,
+      eps_filter=0.1,
+        norder_filter=5,
+      l_topo_z=.false.,
+    l_s_oro=.TRUE.,
+    rfill_valley=0.0,
+      ifill_valley=7,
+    ltime_mean=.true.,
+    lreorder=.false.,
+    lasync_io=.TRUE.,
+    lbdclim=.TRUE.,
+    nprocx=${NPX}, nprocy=${NPY}, nprocio=${NPIO},
+    ydate_ini='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}',
+    ydate_bd ='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}',
+    itype_aerosol = 2,
+    itype_albedo = 2,
+  /
+ &GRID_IN
+  pcontrol_fi = 30000.,
+  ie_in_tot = 361, je_in_tot = 361, ke_in_tot = 60,
+  startlat_in_tot  = -19.36, startlon_in_tot  = -23.33,
+  pollat_in = 43.0, pollon_in = -170.0,
+  dlat_in = 0.11, dlon_in = 0.11,
+  ke_soil_in=9,
+  czml_soil_in=0.005, 0.025, 0.07, 0.16, 0.34, 0.70, 1.47, 2.86, 5.74, 11.50,
+ /
+ &LMGRID
+  ielm_tot=1542, jelm_tot=1542, kelm_tot=60,
+  ivctype=2, vcflat = 11357.0,
+  ke_soil_lm=9, irefatm=2,
+  czml_soil_lm=0.005, 0.025, 0.07, 0.16, 0.34, 0.70, 1.47, 2.86, 5.74,  11.50,
+  vcoord_d=23588.50,22395.93,21304.04,   20307.39,   19399.95,
+     18574.03,   17821.88,   17135.64,   16507.79,   15930.60,
+     15396.52,   14897.86,   14427.98,   13981.10,   13551.52,
+     13133.53,   12721.37,   12312.04,   11900.03,   11485.37,
+     11068.19,   10648.54,   10226.48,    9802.09,    9375.43,
+      8946.58,    8515.59,    8082.55,    7647.52,    7210.55,
+      6771.96,    6332.38,    5896.41,    5468.04,    5050.84,
+      4647.96,    4261.91,    3893.26,    3542.15,    3208.52,
+      2892.23,    2593.71,    2312.95,    2049.75,    1803.89,
+      1575.57,    1364.68,    1170.90,     993.84,     833.44,
+       689.53,     561.52,     448.82,     350.95,     267.55,
+       197.67,     137.23,      87.33,      48.44,      20.00,       0.00,
+  pollat = 43.0 , pollon = -170.0,
+  dlon=0.02, dlat=0.02,
+  startlat_tot  = -14.86,
+  startlon_tot  = -18.86,
+ /
+ &DATABASE
+ /
+ &DATA
+  ylmext_form_read='ncdf',
+  yinext_form_read='ncdf',
+  yin_form_read='ncdf',
+  ylm_form_write='ncdf',
+  ie_ext=2313, je_ext=2313,
+  ylmext_lfn='extpar_2km_europe_2313x2313.nc',
+  ylmext_cat='./',
+  yinext_lfn='lffd${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}c.nc',
+  yinext_cat='./input/',
+  yin_cat='./input/',
+  ylm_cat= './output/',
+  nprocess_ini = 131, nprocess_bd = 132,
+  yinput_type='forecast',
+  ytunit_in='d',
+  ytunit_out='d',
+ /
+ &PRICTR
+  igp_tot = 36, 40, 48, 44, 48, 85, 77,
+  jgp_tot = 30, 94, 38, 26, 26, 96, 12,
+  lchkin=.TRUE., lchkout=.TRUE.,lprgp=.FALSE.,
+ /
+EOF
+
+# setup job
+cat > job <<EOF_job_SLURM
+#!/bin/tcsh
+#SBATCH --job-name=lm2lm
+#SBATCH --output=job.out
+#SBATCH --ntasks=${NTASKS}
+#SBATCH --partition=${QUEUE}
+#SBATCH --time=01:00:00
+#SBATCH --account=${ACCOUNT}
+EOF_job_SLURM
+
+#We currently only have an allocation on GPU nodes
+if [[ $HOST == daint* ]]; then
+  sed -i '/account=/a\
+#SBATCH --constraint=gpu\
+module load daint-gpu' job
+fi
+
+# rest of job (actual work)
+cat >> job <<EOF_job
+
+# Initialization
+set verbose
+set echo
+
+# set environmental parameters
+setenv OMP_NUM_THREADS 1
+setenv MALLOC_MMAP_MAX_ 0
+setenv MALLOC_TRIM_THRESHOLD_ 536870912
+setenv MPICH_RDMA_ENABLED_CUDA 0
+setenv MV2_USE_CUDA 0
+
+# cleanup
+./clean
+
+# echo date
+date
+
+# Run LM in case directory
+${RUNCMD} -u -n ${NTASKS} ${EXE}
+
+# echo date
+date
+
+# do postprocessing
+cd ./output/
+../../bin/grc
+cd -
+
+# remove job tag (if present)
+\rm -f .jobid >&/dev/null
+
+# done
+EOF_job
+
+# clean away old *.out files
+\rm -f *.out 2>/dev/null
+
+if [ -z "${WAITFORJOB}" ]; then
+  jobid=`sbatch -C gpu job | sed 's/Submitted batch job //g'`
+else
+  jobid=`sbatch -C gpu --dependency=afterok:${WAITFORJOB} job | sed 's/Submitted batch job //g'`
+fi
+
+if [ $? -eq 0 -a -n "${jobid}" ]; then
+  echo "${jobid}" > .jobid
+  echo "${jobid}"
+else
+  exit 1
+fi
+

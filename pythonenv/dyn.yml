@@ -1,0 +1,113 @@
+name: dyn
+channels:
+- ioos
+- anaconda
+- scitools
+- defaults
+dependencies:
+- basemap=1.0.7=np110py35_0
+- cairo=1.14.8=0
+- click=6.7=py35_0
+- cligj=0.2.0=py35_0
+- curl=7.45.0=0
+- cycler=0.10.0=py35_0
+- cython=0.25.2=py35_0
+- decorator=4.0.11=py35_0
+- docopt=0.6.2=py35_0
+- docutils=0.13.1=py35_0
+- fontconfig=2.12.1=3
+- freetype=2.5.5=2
+- geos=3.3.3=0
+- glib=2.50.2=1
+- harfbuzz=0.9.39=2
+- ipython=5.3.0=py35_0
+- ipython_genutils=0.1.0=py35_0
+- jbig=2.1=0
+- jinja2=2.9.5=py35_0
+- jpeg=9b=0
+- krb5=1.13.2=0
+- libffi=3.2.1=1
+- libgfortran=3.0.0=1
+- libpng=1.6.27=0
+- libtiff=4.0.6=3
+- lxml=3.7.3=py35_0
+- markupsafe=0.23=py35_2
+- matplotlib=1.5.1=np110py35_0
+- mkl=11.3.3=0
+- mock=2.0.0=py35_0
+- nose=1.3.7=py35_1
+- numpy=1.10.4=py35_2
+- openssl=1.0.2k=1
+- pandas=0.18.1=np110py35_0
+- pango=1.40.3=1
+- path.py=10.1=py35_0
+- pbr=1.10.0=py35_0
+- pcre=8.39=1
+- pexpect=4.2.1=py35_0
+- pickleshare=0.7.4=py35_0
+- pillow=4.0.0=py35_1
+- pip=9.0.1=py35_1
+- pixman=0.34.0=0
+- prompt_toolkit=1.0.9=py35_0
+- ptyprocess=0.5.1=py35_0
+- py=1.4.32=py35_0
+- pygments=2.2.0=py35_0
+- pyparsing=2.1.4=py35_0
+- pyproj=1.9.5.1=py35_0
+- pyqt=4.11.4=py35_4
+- pytest=3.0.6=py35_0
+- python=3.5.3=1
+- pytz=2016.10=py35_0
+- qt=4.8.7=4
+- readline=6.2=2
+- requests=2.13.0=py35_0
+- scipy=0.17.1=np110py35_1
+- setuptools=27.2.0=py35_0
+- shapely=1.5.16=py35_0
+- simplegeneric=0.8.1=py35_1
+- sip=4.18=py35_0
+- six=1.10.0=py35_0
+- tk=8.5.18=0
+- traitlets=4.3.2=py35_0
+- ujson=1.35=py35_0
+- wcwidth=0.1.7=py35_0
+- wheel=0.29.0=py35_0
+- xz=5.2.2=1
+- bzip2=1.0.6=h9a117a8_4
+- h5py=2.7.1=py35h8d53cdc_0
+- hdf4=4.2.13=h3ca952b_2
+- hdf5=1.10.1=h9caa474_1
+- icu=58.2=h9c2bf20_1
+- kealib=1.4.7=h79811e5_5
+- libgcc-ng=7.2.0=h7cc24e2_2
+- libgdal=2.0.0=1
+- libgfortran-ng=7.2.0=h9f7466a_2
+- libnetcdf=4.5.0=hc9a163a_7
+- libstdcxx-ng=7.2.0=h7a57d05_2
+- netcdf4=1.3.1=py35h73d701b_2
+- proj4=4.9.3=hc8507d1_7
+- xerces-c=3.2.0=h524ea4d_2
+- zlib=1.2.11=ha838bed_2
+- descartes=1.0.2=py35_0
+- libiconv=1.14=0
+- libxml2=2.9.4=0
+- libxslt=1.1.29=0
+- sqlite=3.13.0=0
+- cartopy=0.15.0=np110py35_0
+- olefile=0.42.1=py35_1
+- owslib=0.10.3=py35_0
+- proj.4=4.9.1=1
+- pyepsg=0.2.0=py35_0
+- pyshp=1.2.3=py35_0
+- python-dateutil=2.2=py35_0
+- pip:
+  - "git+https://git.iac.ethz.ch/crclim/airstreams.git@master"
+  - "git+https://git.iac.ethz.ch/atmosdyn/DyPy.git@master"
+  - "git+https://github.com/Toblerity/Fiona@1.6.3"
+  - click-plugins==1.0.3
+  - ipython-genutils==0.1.0
+  - lagranto==0.1.7
+  - munch==2.2.0
+  - prompt-toolkit==1.0.9
+  - python-igraph==0.7.1.post6
+

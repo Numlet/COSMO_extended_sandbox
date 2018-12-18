@@ -1,0 +1,41 @@
+#!/bin/bash
+
+NX=$1
+NY=$2
+NIO=$3
+compact_io=$4
+
+echo "grid $NX*$NY with $NIO IO processes"
+
+sed -i "s|nprocx=[0-9]*,|nprocx=${NX},|" INPUT_ORG
+sed -i "s|nprocy=[0-9]*,|nprocy=${NY},|" INPUT_ORG
+sed -i "s|nprocio=[0-9]*,|nprocio=${NIO},|" INPUT_ORG
+
+if [ "$compact_io" == "yes" ]; then
+    NODES_IO=1
+else
+    NODES_IO=$[ $NIO ]
+fi
+NODES_COMP=$[ $NX*$NY ]
+NODES=$[ $NODES_IO + $NODES_COMP ]
+CORES=$[ 8*$NODES ]
+
+#sed -i "s|mppwidth=[0-9]*|mppwidth=$CORES|" job
+sed -i "s|mppwidth=[0-9]*|mppwidth=$NODES|" job
+sed -i "s|SBATCH --nodes.*|SBATCH --nodes=$NODES|" job
+sed -i "s|COSMO_NPROC_NODEVICE.*|COSMO_NPROC_NODEVICE $NIO|" job
+if [ "$compact_io" == "yes" ]; then
+    sed -i "s|aprun.*|aprun -N 1 -n $NODES_COMP ./lm_f90 : -N $NIO -n $NIO ./lm_f90|" job
+    grep "setenv CRAY_CUDA_PROXY" job &> /dev/null
+    if [ "$?" != "0" ]; then
+        echo "error: add the following to your job script:"
+        echo "setenv CRAY_CUDA_PROXY 1"
+        exit;
+    fi
+    sed -i "s|CRAY_CUDA_PROXY.*|CRAY_CUDA_PROXY 1|" job
+else
+    sed -i "s|aprun.*|aprun -N 1 -n $NODES ./lm_f90|" job
+    sed -i "s|CRAY_CUDA_PROXY.*|CRAY_CUDA_PROXY 0|" job
+fi
+
+echo "using $NODES nodes with $CORES cores : $NX*$NY+$NIO" 

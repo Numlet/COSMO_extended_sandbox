@@ -1,0 +1,42 @@
+#!/bin/bash
+
+
+if [ -z "$4" ]; then
+  WAITFORJOB=""
+else
+  WAITFORJOB="$4"
+fi
+
+
+cat > job <<EOF_job
+#!/bin/bash -l
+#
+#SBATCH --job-name=x_chain
+#SBATCH --output=job.out
+#SBATCH --time=00:05:00
+#SBATCH --ntasks=1
+#SBATCH --partition=normal
+module unload xalt
+
+cd ..
+python control_simulation.py
+exit_status=\$?
+echo 'exit_status:' \$exit_status
+if [ "\${exit_status}" -eq 0 ];
+then
+    echo "Ready to run "
+    ./run_daint.sh
+else
+    echo "errors in control_simulation. Aborting step"
+fi
+EOF_job
+
+
+jobid=`sbatch -C gpu job | sed 's/Submitted batch job //g'`
+
+if [ $? -eq 0 -a -n "${jobid}" ]; then
+  echo "${jobid}" > .jobid
+  echo "${jobid}"
+else
+  exit 1
+fi

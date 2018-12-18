@@ -1,0 +1,5 @@
+#!/bin/bash
+
+\rm -rf YU* OUTPUT fort.*  M_* core script_*.grc stdeo_*.grc grc.nqs *.tex
+
+mkdir -p output/1h output/1h_100m output/1h_second output/3h output/3h_CORDEX output/6h output/24h output/Daily_CORDEX
