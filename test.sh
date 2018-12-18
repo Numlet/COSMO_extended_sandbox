@@ -1,7 +1,7 @@
 
 cd
 rm -rf /scratch/snx3000/jvergara/cosmo_sandbox_test
-git clone cosmo_sandobox_x_chain /scratch/snx3000/jvergara/cosmo_sandbox_test
+git clone cosmo_sandbox_x_chain /scratch/snx3000/jvergara/cosmo_sandbox_test
 cd /scratch/snx3000/jvergara/cosmo_sandbox_test
 python define_simulation.py
 python control_simulation.py
