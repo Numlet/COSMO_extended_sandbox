@@ -159,7 +159,8 @@ cat > INPUT_IO <<EOF_IO
  yvarml=' ',
  yvarpl=' ',
  yvarzl='U','V',
- zlev=100,
+ zlev=100
+ ilzint_above_ground=.TRUE.,
  lcheck=.FALSE.,
  luvmasspoint=.FALSE.,
  lwrite_const=.False.,

@@ -128,6 +128,8 @@ for i in range(len(dataframe)):
     
                 os.system('sbatch sync_out.sh output/lm_c %s'%saving_folder)
                 os.system('sbatch sync_out.sh output/lm_f %s'%saving_folder)
+                os.system('sbatch sync_out.sh 2_lm_c %s'%saving_folder)
+                os.system('sbatch sync_out.sh 4_lm_f %s'%saving_folder)
         print (new_status)
         dataframe['status'][i]=new_status
         dataframe['last_update'][i]=time()

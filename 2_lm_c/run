@@ -159,6 +159,7 @@ cat > INPUT_IO <<EOF_IO
   yvarpl=' ',
   yvarzl='U','V',
   zlev=100,
+  lzint_above_ground=.TRUE.,
   lcheck=.FALSE.,
   luvmasspoint=.FALSE.,
   lwrite_const=.False.,
@@ -283,7 +284,7 @@ cat > INPUT_ORG <<EOF_ORG
   nprocx=${NPX}, nprocy=${NPY}, nprocio=${NPIO},
   nboundlines=3,
   ldump_ascii = .FALSE.,
-  idbg_level = 20,
+  idbg_level = 200,
   ncomm_type = 1,
   l_t_check = .FALSE.,
  /END
@@ -436,8 +437,8 @@ pwd
 cd ..
 #python control_simulation.py
 #./run_daint.sh
-#cd x_chain
-#./run SLURM DEBUG pr04 chaining
+cd x_chain
+./run SLURM DEBUG pr04 chaining
 
 EOF_job
 
@@ -448,7 +449,7 @@ EOF_job
 if [ -z "${WAITFORJOB}" ]; then
   jobid=`sbatch -C gpu job | sed 's/Submitted batch job //g'`
 else
-  jobid=`sbatch -C gpu --dependency=afterok:${WAITFORJOB} job | sed 's/Submitted batch job //g'`
+  jobid=`sbatch -C gpu --dependency=after:${WAITFORJOB} job | sed 's/Submitted batch job //g'`
 fi
 
 if [ $? -eq 0 -a -n "${jobid}" ]; then

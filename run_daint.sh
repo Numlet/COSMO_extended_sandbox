@@ -52,18 +52,18 @@ export NPIO_LMF=4
 export EXE_LMF="./lm_f90"
 
 # Configure Simulation
-export LM_YYYY_INI=2006
-export LM_MM_INI=09
+export LM_YYYY_INI=1993
+export LM_MM_INI=11
 export LM_DD_INI=01
 export LM_ZZ_INI=00
 
-export LM_YYYY_BEGIN=2006
+export LM_YYYY_BEGIN=1998
 export LM_MM_BEGIN=09
 export LM_DD_INI=01
 export LM_ZZ_BEGIN=${LM_ZZ_INI}
 
-export LM_NL_HSTART=24
-export LM_NL_HSTOP=48
+export LM_NL_HSTART=42360
+export LM_NL_HSTOP=43080
 
 export FRONTS_TS_START=2006060100
 export FRONTS_TS_END=2006060200
@@ -75,11 +75,11 @@ pwd
 #parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f 5_trajectories 6_climate_analysis 7_msd 8_front_tracking"
 parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f"
 parts="3_lm2lm 4_lm_f"
-#parts="2_lm_c"
+parts="2_lm_c"
 #parts="1_ifs2lm 2_lm_c"
-#parts="0_get_data 1_ifs2lm 2_lm_c"
+parts="1_ifs2lm 2_lm_c"
 #parts='1_ifs2lm'
-#parts="0_get_data 1_ifs2lm"
+#parts="1_ifs2lm"
 #parts='0_get_data'
 for part in ${parts} ; do
   short=`echo "${part}" | sed 's/^[0-9]*_//g'`

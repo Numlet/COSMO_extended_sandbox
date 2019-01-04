@@ -18,7 +18,7 @@ import numpy as np
 # =============================================================================
 name_run='test_'+str(datetime.datetime.now().time())
 name_run='soil_spin_up_test_22-06-2018'
-name_run='test'
+name_run='GA_run'
 
 copy=True
 if copy:
@@ -27,19 +27,19 @@ store_system='/store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/'
 saving_folder=store_system+name_run+'/'
 
 #Initial date
-LM_YYYY_INI='2006'
-LM_MM_INI='09'
+LM_YYYY_INI='1993'
+LM_MM_INI='11'
 LM_DD_INI='01'
 LM_ZZ_INI='00'
 
 #end of chained dates
-LM_YYYY_END_CHAIN='2006'
-LM_MM_END_CHAIN='09'
-LM_DD_END_CHAIN='03'
+LM_YYYY_END_CHAIN='1998'
+LM_MM_END_CHAIN='11'
+LM_DD_END_CHAIN='01'
 LM_ZZ_END_CHAIN='00'
 
 
-main_simulation_step='4_lm_f'
+main_simulation_step='2_lm_c'
 
 d_ini=datetime.datetime(int(LM_YYYY_INI),int(LM_MM_INI),int(LM_DD_INI),int(LM_ZZ_INI))
 
@@ -58,7 +58,7 @@ if months_in_between%months_per_step:
     raise NameError('Number of months is not divisible by the specified months per step')
 
 
-days_per_step=1
+days_per_step=0
 last_step=0
 def diff_days(d1, d2):
     return (d1-d2).days
