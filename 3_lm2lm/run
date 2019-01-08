@@ -103,8 +103,8 @@ cat > INPUT <<EOF
     lasync_io=.TRUE.,
     lbdclim=.TRUE.,
     nprocx=${NPX}, nprocy=${NPY}, nprocio=${NPIO},
-    ydate_ini='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}',
-    ydate_bd ='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}',
+    ydate_ini='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000',
+    ydate_bd ='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000',
     itype_aerosol = 2,
     itype_albedo = 2,
   /

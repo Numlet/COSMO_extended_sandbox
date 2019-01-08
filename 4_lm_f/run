@@ -287,7 +287,7 @@ cat > INPUT_ORG <<EOF_ORG
   num_iope_percomm=1,
   nboundlines=3,
   ldump_ascii = .FALSE.,
-  idbg_level = 30,
+  idbg_level = 3,
   l_t_check = .FALSE.,
  /END
  &TUNING
