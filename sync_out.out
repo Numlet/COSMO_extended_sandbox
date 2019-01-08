@@ -1,9 +1,17 @@
-sync_out started on Fri  4 Jan 01:51:47 CET 2019:
- rsync -aq output/lm_c /store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/GA_run/
+sync_out started on Mon Jan  7 15:42:31 CET 2019:
+ rsync -aq 2_lm_c /store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/GA_run_5min_precip/
 
-sync_out finished on Fri  4 Jan 02:33:55 CET 2019
+sync_out started on Mon Jan  7 15:42:31 CET 2019:
+sync_out started on Mon Jan  7 15:42:31 CET 2019:
+ rsync -aq output/lm_f /store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/GA_run_5min_precip/
+ rsync -aq 4_lm_f /store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/GA_run_5min_precip/
 
-sync_out finished on Fri  4 Jan 03:11:11 CET 2019
 
-sync_out finished on Fri  4 Jan 03:12:41 CET 2019
+sync_out finished on Mon Jan  7 15:42:31 CET 2019
+
+sync_out finished on Mon Jan  7 15:42:31 CET 2019
+
+sync_out finished on Mon Jan  7 15:42:51 CET 2019
+
+sync_out finished on Mon Jan  7 15:44:38 CET 2019
 

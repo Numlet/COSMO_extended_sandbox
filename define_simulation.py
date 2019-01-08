@@ -18,7 +18,7 @@ import numpy as np
 # =============================================================================
 name_run='test_'+str(datetime.datetime.now().time())
 name_run='soil_spin_up_test_22-06-2018'
-name_run='GA_run'
+name_run='GA_run_5min_precip'
 
 copy=True
 if copy:
@@ -29,13 +29,13 @@ saving_folder=store_system+name_run+'/'
 #Initial date
 LM_YYYY_INI='1993'
 LM_MM_INI='11'
-LM_DD_INI='01'
+LM_DD_INI='10'
 LM_ZZ_INI='00'
 
 #end of chained dates
-LM_YYYY_END_CHAIN='1998'
+LM_YYYY_END_CHAIN='1993'
 LM_MM_END_CHAIN='11'
-LM_DD_END_CHAIN='01'
+LM_DD_END_CHAIN='14'
 LM_ZZ_END_CHAIN='00'
 
 
@@ -58,7 +58,7 @@ if months_in_between%months_per_step:
     raise NameError('Number of months is not divisible by the specified months per step')
 
 
-days_per_step=0
+days_per_step=1
 last_step=0
 def diff_days(d1, d2):
     return (d1-d2).days
@@ -72,8 +72,8 @@ def get_dt(step=main_simulation_step):
     with open(step+'/run') as f: lines = f.read().splitlines()
     num=np.nan
     for line in lines:
-        if line.startswith('  dt='):
-            num = float(line.split('=')[-1].strip()[:-1])
+        if line.startswith('DT='):
+            num = float(line.split('=')[-1].strip()[:])
             print (num)
     return num
 

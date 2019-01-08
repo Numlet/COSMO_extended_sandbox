@@ -27,6 +27,12 @@ if [ "${SCHEDULER}" != "SLURM" ]; then
   echo "ERROR: unsupported scheduler (${SCHEDULER})"
   exit 1
 fi
+DT=90
+
+STEP_6M=$((360/DT))
+
+N_START=$((LM_NL_HSTART*60*60/DT))
+N_STOP=$((LM_NL_HSTOP*60*60/DT))
 
 # compute derived variables
 NTASKS=`echo "${NPX}"'*'"${NPY}"'+'"${NPIO}" | bc`
@@ -107,7 +113,7 @@ EOF_INI
 cat > INPUT_IO <<EOF_IO
  &IOCTL
   yform_read='ncdf',
-  ngribout = 9,
+  ngribout = 10,
   nhour_restart=${LM_NL_HSTOP},${LM_NL_HSTOP},1
   ytunit_restart = 'd',
   ldwd_grib_use=.false.,
@@ -164,6 +170,16 @@ cat > INPUT_IO <<EOF_IO
   luvmasspoint=.FALSE.,
   lwrite_const=.False.,
   ydir='./output/1h_100m',
+  ytunit='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  ncomb=${N_START},${N_STOP},${STEP_6M},
+  yvarml='TOT_PREC',
+  lcheck=.FALSE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.False.,
+  ydir='./output/6min_precip',
   ytunit='d',
  /END
 &GRIBOUT
@@ -271,9 +287,9 @@ cat > INPUT_ORG <<EOF_ORG
   ie_tot= 361, je_tot= 361, ke_tot=60,
  /END
  &RUNCTL
-  dt=90.0,
+  dt=${DT},
   hstart=${LM_NL_HSTART},   hstop=${LM_NL_HSTOP},
-  ydate_ini='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}',
+  ydate_ini='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000',
   hincmxt=1.0,
   itype_timing=4,
   lreproduce=.TRUE.,
@@ -371,12 +387,12 @@ EOF_PHY
 
 cat > job <<EOF_job_SLURM
 #!/bin/tcsh
-#SBATCH --job-name=lm_c
+#SBATCH --job-name=lm_c_debug
 #SBATCH --output=job.out
 #SBATCH --nodes=${NNODES}
 #SBATCH --ntasks-per-node=${TASKS_PER_NODE}
 #SBATCH --partition=${QUEUE}
-#SBATCH --time=03:30:00
+#SBATCH --time=00:10:00
 #SBATCH --account=${ACCOUNT}
 EOF_job_SLURM
 if [[ $HOST == daint* ]]; then
