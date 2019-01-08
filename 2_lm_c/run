@@ -27,6 +27,9 @@ if [ "${SCHEDULER}" != "SLURM" ]; then
   echo "ERROR: unsupported scheduler (${SCHEDULER})"
   exit 1
 fi
+
+# compute derived variables
+
 DT=90
 
 STEP_6M=$((360/DT))
@@ -34,7 +37,6 @@ STEP_6M=$((360/DT))
 N_START=$((LM_NL_HSTART*60*60/DT))
 N_STOP=$((LM_NL_HSTOP*60*60/DT))
 
-# compute derived variables
 NTASKS=`echo "${NPX}"'*'"${NPY}"'+'"${NPIO}" | bc`
 NNODES=`python -c "from math import ceil; print(int(ceil(${NTASKS}.0/${TASKS_PER_NODE})))"`
 
@@ -113,7 +115,7 @@ EOF_INI
 cat > INPUT_IO <<EOF_IO
  &IOCTL
   yform_read='ncdf',
-  ngribout = 10,
+  ngribout = 9,
   nhour_restart=${LM_NL_HSTOP},${LM_NL_HSTOP},1
   ytunit_restart = 'd',
   ldwd_grib_use=.false.,
@@ -140,8 +142,6 @@ cat > INPUT_IO <<EOF_IO
   lan_t_cl = .TRUE.,  lan_w_cl = .TRUE., lan_hmo3 = .TRUE., lan_t_so0 = .TRUE.,
   lan_t_snow = .TRUE., lan_w_snow = .TRUE., lan_w_i = .TRUE., lan_rho_snow = .TRUE.,
   lan_t_s = .FALSE.,
-  newbc=0,
-  hnewbcdt=3.0,
   ytunitbd='d',
  /END
  &GRIBOUT
@@ -185,7 +185,7 @@ cat > INPUT_IO <<EOF_IO
 &GRIBOUT
   yform_write='ncdf',
   hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
-  yvarml= 'VMAX_10M','QV_2M','QCVG_CON','TOT_PREC','TOT_PR','TOT_SNOW','U_10M', 'V_10M', 'T_2M', 'T_G', 'RELHUM_2M', 'PS', 'TQC','TQI','TQV','CAPE_ML','CIN_ML','HPBL','RUNOFF_S', 'RUNOFF_G'
+  yvarml= 'VMAX_10M','QV_2M','QCVG_CON','TOT_PR','TOT_SNOW','U_10M', 'V_10M', 'T_2M', 'T_G', 'RELHUM_2M', 'PS', 'TQC','TQI','TQV','CAPE_ML','CIN_ML','HPBL','RUNOFF_S', 'RUNOFF_G'
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
@@ -229,7 +229,7 @@ cat > INPUT_IO <<EOF_IO
  &GRIBOUT
   yform_write='ncdf',
   hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},3,
-  yvarml='VMAX_10M','PMSL', 'TQV', 'TWATER', 'TWATFLXU', 'TWATFLXV'
+  yvarml='PMSL', 'TQV', 'TWATER', 'TWATFLXU', 'TWATFLXV'
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
@@ -254,27 +254,13 @@ cat > INPUT_IO <<EOF_IO
  &GRIBOUT
   yform_write='ncdf',
   hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},24,
-  yvarml='VMAX_10M', 'VABSMX_10M','T_SO','H_SNOW','W_SO', 'W_SNOW', 'TMIN_2M', 'TMAX_2M', 'RUNOFF_S', 'RUNOFF_G',
+  yvarml= 'VABSMX_10M','T_SO','H_SNOW','W_SO', 'W_SNOW', 'TMIN_2M', 'TMAX_2M', 
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
   luvmasspoint=.FALSE.,
-  lwrite_const=.FALSE.,
+  lwrite_const=.TRUE.,
   ydir='./output/24h',
-  ytunit='d',
- /END
- &GRIBOUT
-  yform_write='ncdf',
-  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,24,
-  yvarml='HSURF','FR_LAND','ROOTDP',
-  yvarpl=' ',
-  yvarzl=' ',
-  lcheck=.TRUE.,
-  luvmasspoint=.FALSE.,
-  lwrite_const=.FALSE.,
-  ydir='./output/Daily_CORDEX',
-  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
-  l_fi_pmsl_smooth =.FALSE.,
   ytunit='d',
  /END
 EOF_IO
@@ -372,7 +358,7 @@ cat > INPUT_PHY <<EOF_PHY
       itype_evsl=4,
       itype_hydmod=1,
       itype_hydcond=1,
-      lsoil_init_fill=.TRUE.,  ! Saturate low soil levels; Use only in first month of simualtion
+      lsoil_init_fill=.FALSE.,  ! Saturate low soil levels; Use only in first month of simualtion
     lconv=.true.,
       itype_conv=0,
       nincconv=5,
@@ -453,8 +439,8 @@ pwd
 cd ..
 #python control_simulation.py
 #./run_daint.sh
-cd x_chain
-./run SLURM DEBUG pr04 chaining
+#cd x_chain
+#./run SLURM DEBUG pr04 chaining
 
 EOF_job
 

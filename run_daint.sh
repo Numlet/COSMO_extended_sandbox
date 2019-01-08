@@ -62,8 +62,8 @@ export LM_MM_BEGIN=11
 export LM_DD_INI=10
 export LM_ZZ_BEGIN=${LM_ZZ_INI}
 
-export LM_NL_HSTART=72
-export LM_NL_HSTOP=96
+export LM_NL_HSTART=0
+export LM_NL_HSTOP=24
 
 export FRONTS_TS_START=2006060100
 export FRONTS_TS_END=2006060200
@@ -76,6 +76,7 @@ pwd
 parts="1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f"
 #parts="2_lm_c"
 #parts="3_lm2lm 4_lm_f"
+#parts="4_lm_f"
 #parts="2_lm_c"
 #parts="1_ifs2lm 2_lm_c"
 #parts="1_ifs2lm 2_lm_c"
