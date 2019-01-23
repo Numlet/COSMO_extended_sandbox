@@ -13,6 +13,7 @@ import os.path
 import os
 import sys
 import numpy as np
+import calendar
 # =============================================================================
 # Define chain for simulation
 # =============================================================================
@@ -29,13 +30,13 @@ saving_folder=store_system+name_run+'/'
 #Initial date
 LM_YYYY_INI='1993'
 LM_MM_INI='11'
-LM_DD_INI='10'
+LM_DD_INI='01'
 LM_ZZ_INI='00'
 
 #end of chained dates
-LM_YYYY_END_CHAIN='1993'
-LM_MM_END_CHAIN='11'
-LM_DD_END_CHAIN='14'
+LM_YYYY_END_CHAIN='1994'
+LM_MM_END_CHAIN='01'
+LM_DD_END_CHAIN='01'
 LM_ZZ_END_CHAIN='00'
 
 
@@ -47,7 +48,9 @@ d_ini=datetime.datetime(int(LM_YYYY_INI),int(LM_MM_INI),int(LM_DD_INI),int(LM_ZZ
 d_end_chain=datetime.datetime(int(LM_YYYY_END_CHAIN),int(LM_MM_END_CHAIN),int(LM_DD_END_CHAIN),int(LM_ZZ_END_CHAIN))
 
 
-months_per_step=1
+months_per_step=0.5
+days_per_step=0 #If >0, this will overwrite months_per_step
+last_step=0
 
 def diff_month(d1, d2):
     return (d1.year - d2.year) * 12 + d1.month - d2.month
@@ -59,8 +62,6 @@ if months_in_between%months_per_step:
     raise NameError('Number of months is not divisible by the specified months per step')
 
 
-days_per_step=1
-last_step=0
 def diff_days(d1, d2):
     return (d1-d2).days
 if days_per_step:
@@ -119,10 +120,16 @@ if __name__=='__main__':
         for i in range(int(steps)):
             d_str=d_end
             if not days_per_step:
-                d_end=d_end+ relativedelta(months=months_per_step)
+                if months_per_step==0.5:
+                    if d_end.day<15:
+                        d_end=d_end+ relativedelta(days=15-d_end.day)
+                    else:
+                        days_in_month=calendar.monthrange(d_end.year, d_end.month)[1]
+                        d_end=d_end+ relativedelta(days=days_in_month-d_end.day+1)
+                else:d_end=d_end+ relativedelta(months=months_per_step)
             else:
                 d_end=d_end+ relativedelta(days=days_per_step)
-                
+            print(d_end)    
             h_str=(d_str-d_ini).days*24
             h_end=(d_end-d_ini).days*24
             status=0
