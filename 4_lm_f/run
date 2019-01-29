@@ -355,7 +355,7 @@ cat > INPUT_PHY <<EOF_PHY
       itype_trvg=2,
       ke_soil=9,
       czml_soil=0.005, 0.025, 0.07, 0.16, 0.34, 0.70, 1.47, 2.86, 5.74,  11.50,
-      czbot_w_so=4.0,
+      czbot_w_so=8.0,
       itype_root = 2
       itype_heatcond=2
       itype_evsl=4,
