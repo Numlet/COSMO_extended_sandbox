@@ -121,7 +121,7 @@ EOF_INI
 cat > INPUT_IO <<EOF_IO
  &IOCTL
   yform_read='ncdf',
-  ngribout = 7,
+  ngribout = 8,
   nhour_restart=${LM_NL_HSTOP},${LM_NL_HSTOP},1
   ytunit_restart = 'd',
   ldwd_grib_use=.false.,
