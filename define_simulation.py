@@ -19,7 +19,7 @@ import calendar
 # =============================================================================
 name_run='test_'+str(datetime.datetime.now().time())
 name_run='soil_spin_up_test_22-06-2018'
-name_run='GA_run_5min_precip'
+name_run='GA_second_soil_spinup'
 
 copy=True
 if copy:
@@ -34,21 +34,21 @@ LM_DD_INI='01'
 LM_ZZ_INI='00'
 
 #end of chained dates
-LM_YYYY_END_CHAIN='1994'
-LM_MM_END_CHAIN='01'
+LM_YYYY_END_CHAIN='1998'
+LM_MM_END_CHAIN='11'
 LM_DD_END_CHAIN='01'
 LM_ZZ_END_CHAIN='00'
 
 
 main_simulation_step='2_lm_c'
-main_simulation_step='4_lm_f'
+#main_simulation_step='4_lm_f'
 
 d_ini=datetime.datetime(int(LM_YYYY_INI),int(LM_MM_INI),int(LM_DD_INI),int(LM_ZZ_INI))
 
 d_end_chain=datetime.datetime(int(LM_YYYY_END_CHAIN),int(LM_MM_END_CHAIN),int(LM_DD_END_CHAIN),int(LM_ZZ_END_CHAIN))
 
 
-months_per_step=0.5
+months_per_step=2
 days_per_step=0 #If >0, this will overwrite months_per_step
 last_step=0
 

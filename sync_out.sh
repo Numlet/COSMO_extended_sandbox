@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #
-#SBATCH --time=02:00:00
+#SBATCH --time=12:00:00
 #SBATCH --job-name=sync_out
 #SBATCH --output=sync_out.out
 #SBATCH --ntasks=1

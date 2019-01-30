@@ -168,7 +168,7 @@ EOF
 #SBATCH --output=job.out
 #SBATCH --ntasks=${NTASKS}
 #SBATCH --partition=${QUEUE}
-#SBATCH --time=00:30:00
+#SBATCH --time=01:30:00
 #SBATCH --account=${ACCOUNT}
 EOF_job_SLURM
 #We currently only have an allocation on GPU nodes

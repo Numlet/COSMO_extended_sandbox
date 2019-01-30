@@ -54,16 +54,16 @@ export EXE_LMF="./lm_f90"
 # Configure Simulation
 export LM_YYYY_INI=1993
 export LM_MM_INI=11
-export LM_DD_INI=10
+export LM_DD_INI=01
 export LM_ZZ_INI=00
 
 export LM_YYYY_BEGIN=1993
 export LM_MM_BEGIN=11
-export LM_DD_INI=10
+export LM_DD_INI=01
 export LM_ZZ_BEGIN=${LM_ZZ_INI}
 
 export LM_NL_HSTART=0
-export LM_NL_HSTOP=24
+export LM_NL_HSTOP=1464
 
 export FRONTS_TS_START=2006060100
 export FRONTS_TS_END=2006060200
@@ -73,7 +73,7 @@ jobid=""
 lmfid=""
 pwd
 #parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f 5_trajectories 6_climate_analysis 7_msd 8_front_tracking"
-parts="1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f"
+parts="0_get_data 1_ifs2lm 2_lm_c"
 #parts="2_lm_c"
 #parts="3_lm2lm 4_lm_f"
 #parts="4_lm_f"

@@ -115,7 +115,7 @@ EOF_INI
 cat > INPUT_IO <<EOF_IO
  &IOCTL
   yform_read='ncdf',
-  ngribout = 9,
+  ngribout = 8,
   nhour_restart=${LM_NL_HSTOP},${LM_NL_HSTOP},1
   ytunit_restart = 'd',
   ldwd_grib_use=.false.,
@@ -195,23 +195,6 @@ cat > INPUT_IO <<EOF_IO
   ytunit='d',
  /END
  &GRIBOUT
-  yform_write='ncdf',
-  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
-  yvarml='U','V','W','T','QV','QC',
-         'PP',
-         'QS','QR','QI','QG',
-         'VIO3','HMO3',
-         'T_SNOW','QV_S','W_SNOW','W_I','T_S',
-         'T_SO','W_SO','RHO_SNOW','FRESHSNW',
-  yvarpl=' ',
-  yvarzl=' ',
-  lcheck=.FALSE.,
-  luvmasspoint=.FALSE.,
-  lwrite_const=.TRUE.,
-  ydir='./output',
-  ytunit='d',
- /END
- &GRIBOUT
  yform_write='ncdf',
   hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,3,
   yvarml='',
@@ -286,7 +269,7 @@ cat > INPUT_ORG <<EOF_ORG
   nprocx=${NPX}, nprocy=${NPY}, nprocio=${NPIO},
   nboundlines=3,
   ldump_ascii = .FALSE.,
-  idbg_level = 200,
+  idbg_level = 2000,
   ncomm_type = 1,
   l_t_check = .FALSE.,
  /END
@@ -373,12 +356,12 @@ EOF_PHY
 
 cat > job <<EOF_job_SLURM
 #!/bin/tcsh
-#SBATCH --job-name=lm_c_debug
+#SBATCH --job-name=lm_c_spinup
 #SBATCH --output=job.out
 #SBATCH --nodes=${NNODES}
 #SBATCH --ntasks-per-node=${TASKS_PER_NODE}
 #SBATCH --partition=${QUEUE}
-#SBATCH --time=00:10:00
+#SBATCH --time=02:30:00
 #SBATCH --account=${ACCOUNT}
 EOF_job_SLURM
 if [[ $HOST == daint* ]]; then
@@ -439,8 +422,8 @@ pwd
 cd ..
 #python control_simulation.py
 #./run_daint.sh
-#cd x_chain
-#./run SLURM DEBUG pr04 chaining
+cd x_chain
+./run SLURM DEBUG pr04 chaining
 
 EOF_job
 
