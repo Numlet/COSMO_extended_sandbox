@@ -51,8 +51,8 @@ module unload xalt
 if [ ! -d ../input/ifs2lm ] ; then mkdir -p ../input/ifs2lm ; fi
 
 #Copy External Parameters
-if [ ! -f ../1_ifs2lm/$extpar_file_lm_c ] ; then /bin/cp $extpar_dir/$extpar_file_lm_c ../1_ifs2lm/ ; fi
-if [ ! -f ../3_lm2lm/$extpar_file_lm_f  ] ; then /bin/cp $extpar_dir/$extpar_file_lm_f ../3_lm2lm/  ; fi
+if [ ! -f ../1_ifs2lm/$extpar_file_lm_c ] ; then /bin/cp $extpar_dir/$extpar_file_lm_c ../1_ifs2lm/input ; fi
+if [ ! -f ../3_lm2lm/$extpar_file_lm_f  ] ; then /bin/cp $extpar_dir/$extpar_file_lm_f ../3_lm2lm/input  ; fi
 
 
 tar -xzvf $bd_data -C output --transform 's/caf/cas/'

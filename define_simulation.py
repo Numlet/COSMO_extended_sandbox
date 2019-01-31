@@ -17,15 +17,29 @@ import calendar
 # =============================================================================
 # Define chain for simulation
 # =============================================================================
-name_run='test_'+str(datetime.datetime.now().time())
-name_run='soil_spin_up_test_22-06-2018'
-name_run='GA_second_soil_spinup'
+name_run='testing_sandbox'
 
-copy=True
-if copy:
-    os.system('cp ~/sync_out.sh .')
+postprocessing=True
 store_system='/store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/'
 saving_folder=store_system+name_run+'/'
+scratch_folder= os.environ['SCRATCH']+'/'+name_run
+
+#set name run in run_daint
+os.system("sed -i 's/.*NAME_RUN=.*/NAME_RUN=\"%s\"/' run_daint.sh"%name_run)
+
+# =============================================================================
+# Creating directories
+# =============================================================================
+
+os.makedirs(saving_folder, exist_ok=True)
+os.makedirs(scratch_folder, exist_ok=True)
+os.makedirs(scratch_folder+'/input', exist_ok=True)
+os.makedirs(scratch_folder+'/output', exist_ok=True)
+#linking them
+if not  os.path.exists('output'):
+    os.system('ln -s '+scratch_folder+'/output output')
+if not  os.path.exists('input'):
+    os.system('ln -s '+scratch_folder+'/input input')
 
 #Initial date
 LM_YYYY_INI='1993'
@@ -34,9 +48,9 @@ LM_DD_INI='01'
 LM_ZZ_INI='00'
 
 #end of chained dates
-LM_YYYY_END_CHAIN='1998'
+LM_YYYY_END_CHAIN='1993'
 LM_MM_END_CHAIN='11'
-LM_DD_END_CHAIN='01'
+LM_DD_END_CHAIN='03'
 LM_ZZ_END_CHAIN='00'
 
 
@@ -49,7 +63,7 @@ d_end_chain=datetime.datetime(int(LM_YYYY_END_CHAIN),int(LM_MM_END_CHAIN),int(LM
 
 
 months_per_step=2
-days_per_step=0 #If >0, this will overwrite months_per_step
+days_per_step=1 #If >0, this will overwrite months_per_step
 last_step=0
 
 def diff_month(d1, d2):
@@ -111,7 +125,6 @@ name_control_dataframe='Dataframe_'+name_run
 # Create chain
 # =============================================================================
 if __name__=='__main__':
-    os.makedirs(saving_folder, exist_ok=True)
     if not os.path.isfile(name_control_dataframe):
         print('Creating dataframe')
         dataframe=pd.DataFrame(columns=columns)

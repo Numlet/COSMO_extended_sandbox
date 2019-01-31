@@ -147,7 +147,7 @@ cat > INPUT <<EOF
   yin_form_read='ncdf',
   ylm_form_write='ncdf',
   ie_ext=2313, je_ext=2313,
-  ylmext_lfn='extpar_2km_europe_2313x2313.nc',
+  ylmext_lfn='./input/extpar_2km_europe_2313x2313.nc',
   ylmext_cat='./',
   yinext_lfn='lffd${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}c.nc',
   yinext_cat='./input/',

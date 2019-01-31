@@ -8,11 +8,12 @@ Created on Fri Jun 22 09:25:39 2018
 
 import datetime
 from dateutil.relativedelta import relativedelta
+import subprocess
 import pandas as pd
 import os.path
 import os
 import sys
-from define_simulation import d_ini, d_end_chain,name_control_dataframe, saving_folder,copy, get_dt,main_simulation_step, time, get_idbg,multiply_idbg
+from define_simulation import d_ini, d_end_chain,name_control_dataframe, saving_folder,postprocessing, get_dt,main_simulation_step, time, get_idbg,multiply_idbg
 pd.options.mode.chained_assignment = None
 
 def edit_and_submit_run(d_ini,d_str,h_str,h_end):
@@ -37,12 +38,12 @@ def edit_and_submit_run(d_ini,d_str,h_str,h_end):
 #    os.mknod(str(d_str))
 #    os.system("sbatch chain_simulation.sh")
     if os.path.isfile('2_lm_c/job.out'): 
-        a=os.system('cp 2_lm_c/job.out job.lm_c.out.%s'%d_str.isoformat()[:10])
+#        a=os.system('cp 2_lm_c/job.out job.lm_c.out.%s'%d_str.isoformat()[:10])
         a=os.system('cp 2_lm_c/job.out 2_lm_c/job.lm_c.out.%s'%d_str.isoformat()[:10])
     else:
         print('2_lm_c/job.out file did not exist')
     if os.path.isfile('4_lm_f/job.out'):
-        a=os.system('cp 4_lm_f/job.out job.lm_f.out.%s'%d_str.isoformat()[:10])
+#        a=os.system('cp 4_lm_f/job.out job.lm_f.out.%s'%d_str.isoformat()[:10])
         a=os.system('cp 4_lm_f/job.out 4_lm_f/job.lm_f.out.%s'%d_str.isoformat()[:10])
     else:
         print('4_lm_f/job.out file did not exist')
@@ -124,12 +125,19 @@ for i in range(len(dataframe)):
             #checking that the timestep is what it should be
 #            dt=get_dt()
 #            a=os.system("sed -i 's/ dt=%s/ dt=%1.1f/g' %s/run"%(dt,dataframe['dt'][i],main_simulation_step))
-            if copy:
+            if postprocessing:
                 print('Syncronizing files to %s'%saving_folder)
+#                os.system('cd postprocessing && ./run')
 #                os.system('rsync -aq output/ %s'%saving_folder)
     
-                os.system('sbatch sync_out.sh output/lm_c %s'%saving_folder)
-                os.system('sbatch sync_out.sh output/lm_f %s'%saving_folder)
+                lm_c_jobid=subprocess.run(['sbatch run_compress.sh lm_c'],stdout=subprocess.PIPE,shell=True)
+                lm_f_jobid=subprocess.run(['sbatch run_compress.sh lm_f'],stdout=subprocess.PIPE,shell=True)
+                print(lm_c_jobid,str(lm_c_jobid.stdout[-9:-2])[2:-1])
+                os.system('sbatch --dependency=afterok:%s sync_out.sh output/lm_c %s'%(str(lm_c_jobid.stdout[-9:-2])[2:-1],saving_folder))
+                os.system('sbatch --dependency=afterok:%s sync_out.sh output/lm_f %s'%(str(lm_f_jobid.stdout[-9:-2])[2:-1],saving_folder))
+
+
+
                 os.system('sbatch sync_out.sh 2_lm_c %s'%saving_folder)
                 os.system('sbatch sync_out.sh 4_lm_f %s'%saving_folder)
         print (new_status)

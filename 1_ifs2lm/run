@@ -144,7 +144,7 @@ cat > INPUT <<EOF
   yin_form_read='ncdf',
   ylm_form_write='ncdf',
   ie_ext=771, je_ext=771,
-  ylmext_lfn='extpar_12km_europe_771x771.nc',
+  ylmext_lfn='./input/extpar_12km_europe_771x771.nc',
   ylmext_cat='./',
   yinext_lfn='cas${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}.nc',
   yinext_cat='./input/',
@@ -168,7 +168,7 @@ EOF
 #SBATCH --output=job.out
 #SBATCH --ntasks=${NTASKS}
 #SBATCH --partition=${QUEUE}
-#SBATCH --time=01:30:00
+#SBATCH --time=00:30:00
 #SBATCH --account=${ACCOUNT}
 EOF_job_SLURM
 #We currently only have an allocation on GPU nodes

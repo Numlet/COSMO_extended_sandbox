@@ -8,8 +8,8 @@ export MALLOC_TRIM_THRESHOLD_=536870912
 export OMP_NUM_THREADS=1
 export CDO_EXEC=/apps/daint/UES/jenkins/6.0.UP04/gpu/easybuild/software/CDO/1.9.0-CrayGNU-17.08/bin/cdo
 
-ulimit -s unlimited
-ulimit -a
+#ulimit -s unlimited
+#ulimit -a
 module load daint-gpu
 export MPICH_RDMA_ENABLED_CUDA=1
 
@@ -21,8 +21,10 @@ while getopts "o" opt
      esac
 done
 # global setup
+NAME_RUN="testing_sandbox"
+
 export SCHEDULER="SLURM"
-export QUEUE="normal"
+export QUEUE="debug"
 export ACCOUNT="pr04"
 export RUNCMD="srun"
 export CORES_PER_NODE=24
@@ -62,8 +64,8 @@ export LM_MM_BEGIN=11
 export LM_DD_INI=01
 export LM_ZZ_BEGIN=${LM_ZZ_INI}
 
-export LM_NL_HSTART=0
-export LM_NL_HSTOP=1464
+export LM_NL_HSTART=24
+export LM_NL_HSTOP=48
 
 export FRONTS_TS_START=2006060100
 export FRONTS_TS_END=2006060200
@@ -82,7 +84,6 @@ parts="0_get_data 1_ifs2lm 2_lm_c"
 #parts="1_ifs2lm 2_lm_c"
 #parts='1_ifs2lm'
 #parts="1_ifs2lm"
-#parts='0_get_data'
 for part in ${parts} ; do
   short=`echo "${part}" | sed 's/^[0-9]*_//g'`
   number=${part%%_*}
