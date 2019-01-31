@@ -1,17 +1,13 @@
-sync_out started on Mon Jan  7 15:42:31 CET 2019:
- rsync -aq 2_lm_c /store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/GA_run_5min_precip/
+sync_out started on Wed Jan 30 19:19:43 CET 2019:
+ rsync -aq output/lm_f /store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/GA_second_soil_spinup/
 
-sync_out started on Mon Jan  7 15:42:31 CET 2019:
-sync_out started on Mon Jan  7 15:42:31 CET 2019:
- rsync -aq output/lm_f /store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/GA_run_5min_precip/
- rsync -aq 4_lm_f /store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/GA_run_5min_precip/
+rsync: link_stat "/scratch/snx3000/jvergara/GA_second_spiup/output/lm_f" failed: No such file or directory (2)
+sync_out finished on Wed Jan 30 19:19:43 CET 2019
 
+rsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1052) [sender=3.0.9]
+sync_out finished on Wed Jan 30 19:19:44 CET 2019
 
-sync_out finished on Mon Jan  7 15:42:31 CET 2019
+sync_out finished on Wed Jan 30 19:21:04 CET 2019
 
-sync_out finished on Mon Jan  7 15:42:31 CET 2019
-
-sync_out finished on Mon Jan  7 15:42:51 CET 2019
-
-sync_out finished on Mon Jan  7 15:44:38 CET 2019
+sync_out finished on Wed Jan 30 19:52:23 CET 2019
 

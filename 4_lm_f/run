@@ -275,7 +275,8 @@ cat > INPUT_ORG <<EOF_ORG
   dt=${DT},
   hstart=${LM_NL_HSTART},   hstop=${LM_NL_HSTOP},
   ydate_ini='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000',
-  hincmxt=1.0,
+  hincmxt=24.0,
+  hincmxu=1.0,
   itype_timing=4,
   lreproduce=.TRUE.,
   luseobs =.false.,
@@ -291,8 +292,8 @@ cat > INPUT_ORG <<EOF_ORG
   l_t_check = .FALSE.,
  /END
  &TUNING
-   tkhmin = 0.35,
-   tkmmin = 1.0,
+   tkhmin = 0.4,
+   tkmmin = 0.4,
    rlam_mom=0.0,
    rlam_heat = 0.5249,
    v0snow = 20.0,
