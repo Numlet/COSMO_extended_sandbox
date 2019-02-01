@@ -35,11 +35,6 @@ os.makedirs(saving_folder, exist_ok=True)
 os.makedirs(scratch_folder, exist_ok=True)
 os.makedirs(scratch_folder+'/input', exist_ok=True)
 os.makedirs(scratch_folder+'/output', exist_ok=True)
-#linking them
-if not  os.path.exists('output'):
-    os.system('ln -s '+scratch_folder+'/output output')
-if not  os.path.exists('input'):
-    os.system('ln -s '+scratch_folder+'/input input')
 
 #Initial date
 LM_YYYY_INI='1993'
@@ -125,6 +120,11 @@ name_control_dataframe='Dataframe_'+name_run
 # Create chain
 # =============================================================================
 if __name__=='__main__':
+    print('Linking input/output folders to SCRATCH')
+    os.system('ln -s '+scratch_folder+'/output output')
+
+    os.system('ln -s '+scratch_folder+'/input input')
+
     if not os.path.isfile(name_control_dataframe):
         print('Creating dataframe')
         dataframe=pd.DataFrame(columns=columns)
