@@ -1,0 +1,465 @@
+#!/bin/bash
+
+# setup defaults
+[ -z "${NPX_LMC}"  ] && NPX=2             || NPX=${NPX_LMC}
+[ -z "${NPY_LMC}"  ] && NPY=2             || NPY=${NPY_LMC}
+[ -z "${NPIO_LMC}" ] && NPIO=0            || NPIO=${NPIO_LMC}
+[ -z "${EXE_LMC}"  ] && EXE=lm_f90        || EXE=${EXE_LMC}
+[ -z "$1"          ] && SCHEDULER="SLURM" || SCHEDULER="$1"
+[ -z "$2"          ] && QUEUE="normal"   || QUEUE="$2"
+[ -z "$3"          ] && ACCOUNT="ch4"     || ACCOUNT="$3"
+[ -z "$4"          ] && WAITFORJOB=""     || WAITFORJOB="$4"
+
+if [ -z "$CORES_PER_NODE" ] ; then
+  echo "ERROR: need to specify CORES_PER_NODE"
+  exit 1
+fi
+
+if [ -z "$TASKS_PER_NODE" ] ; then
+  echo "ERROR: need to specify TASKS_PER_NODE"
+  exit 1
+fi
+
+HOST=`hostname | sed 's/\..*$//g' | sed 's/[0-9]*$//g'`
+
+# check scheduler
+if [ "${SCHEDULER}" != "SLURM" ]; then
+  echo "ERROR: unsupported scheduler (${SCHEDULER})"
+  exit 1
+fi
+
+# compute derived variables
+
+DT=90
+
+STEP_6M=$((360/DT))
+
+N_START=$((LM_NL_HSTART*60*60/DT))
+N_STOP=$((LM_NL_HSTOP*60*60/DT))
+
+NTASKS=`echo "${NPX}"'*'"${NPY}"'+'"${NPIO}" | bc`
+NNODES=`python -c "from math import ceil; print(int(ceil(${NTASKS}.0/${TASKS_PER_NODE})))"`
+
+# cleanup
+#if [ -f .jobid ]; then
+#  $(squeue -j `cat .jobid` &>/dev/null) && scancel `cat .jobid`
+#  sleep 3
+#  \rm .jobid 2>/dev/null
+#fi
+./clean
+
+# setup namelists
+cat > INPUT_ASS <<EOF_ASS
+ &NUDGING
+ /END
+EOF_ASS
+cat > INPUT_DIA <<EOF_DIA
+ &DIACTL
+  n0meanval=0, nincmeanval=1,
+  itype_diag_t2m=1,
+  itype_diag_gusts=1,
+  lgplong =.TRUE.,   n0gp=0,      hincgp=1.,
+  stationlist_tot= 0, 0, 46.817,  6.935, 'Payerne',
+                   0, 0, 47.483,  8.533, 'Zurich-Kloten',
+ /END
+EOF_DIA
+cat > INPUT_DYN <<EOF_DYN
+ &DYNCTL
+    lspubc=.true.,
+    itype_spubc=3,
+      rdheight=13500.0,
+      nrdtau=10,
+    lcpp_dycore=.TRUE.,
+    lexpl_lbc=.true.,
+      rlwidth=85000.0,
+    ldyn_bbc=.false.,
+    itype_bbc_w=114,
+    betasw=0.4,
+    xkd=0.1,
+    epsass=0.15,
+    lcond=.true.,
+    l_diff_Smag = .TRUE.,
+    lhordiff=.true.,
+      itype_hdiff=2,
+      hd_corr_u_bd=0.75,
+      hd_corr_t_bd=0.75,
+      hd_corr_trcr_bd=0.0,
+      hd_corr_p_bd=0.75,
+      hd_corr_u_in=0.0,
+      hd_corr_t_in=0.0,
+      hd_corr_trcr_in=0.0,
+      hd_corr_p_in=0.0,
+      hd_dhmax=250.,
+    l2tls=.true.,
+      irunge_kutta=1,
+        irk_order=3,
+        iadv_order=5,
+        itheta_adv=0,
+        ltadv_limiter=.false.,
+      itype_fast_waves=2, 
+      y_scalar_advect = 'BOTT2_STRANG',
+      y_vert_adv_dyn='impl2',
+        ieva_order=3,
+    itype_outflow_qrsg=2,
+    itype_lbc_qrsg=1,
+ /END
+EOF_DYN
+cat > INPUT_INI <<EOF_INI
+ &INICTL
+  ndfi=2,
+  tspan= 1840.0, taus= 1840.0,
+  dtbak=40.0, dtfwd=40.0,
+ /END
+EOF_INI
+#output only fields that require no post-processing
+cat > INPUT_IO <<EOF_IO
+ &IOCTL
+  yform_read='ncdf',
+  ngribout = 9,
+  nhour_restart=${LM_NL_HSTOP},${LM_NL_HSTOP},1
+  ytunit_restart = 'd',
+  ydir_restart_in='./output/restarts'
+  ydir_restart_out='./output/restarts'
+  ldwd_grib_use=.false.,
+  l_ke_in_gds=.TRUE.,
+  lasync_io=.FALSE.,
+  itype_gather=2,
+  lbdclim = .TRUE.,
+ /END
+ &GRIBIN
+  lbdana=.FALSE.,
+  ydirini='./input/',
+  lchkini=.TRUE.,
+  hincbound=6.0,
+  ydirbd='./bc/',
+  lchkbd =.TRUE.,
+  lana_qi = .FALSE.,
+  llb_qi  = .True.,
+  lana_qg = .FALSE.,
+  llb_qg  = .FALSE.,
+  lana_qr_qs = .FALSE.,
+  llb_qr_qs  = .FALSE.,
+  lana_rho_snow = .FALSE.,
+  lan_lai = .TRUE., lan_rootdp = .TRUE., lan_vio3 = .TRUE., lan_plcov = .TRUE.,
+  lan_t_cl = .TRUE.,  lan_w_cl = .TRUE., lan_hmo3 = .TRUE., lan_t_so0 = .TRUE.,
+  lan_t_snow = .TRUE., lan_w_snow = .TRUE., lan_w_i = .TRUE., lan_rho_snow = .TRUE.,
+  lan_t_s = .FALSE.,
+  ytunitbd='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,1,
+  yvarml='CLCT','CLCH','CLCM','CLCL','ASHFL_S','ALHFL_S','ASOB_S','ASOB_T','ATHB_T','ALWU_S','ASWDIFU_S','ALB_RAD','ATHB_S','ASWD_S','LWU_S','AEVAP_S'
+  yvarpl=' ',
+  yvarzl=' ',
+  lcheck=.TRUE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.TRUE.,
+  ydir='./output/1h_second',
+  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
+  l_fi_pmsl_smooth =.FALSE.,
+  ytunit='d',
+ /END 
+ &GRIBOUT
+  yform_write='ncdf',
+  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
+  yvarml=' ',
+  yvarpl=' ',
+  yvarzl='U','V',
+  zlev=100,
+  lzint_above_ground=.TRUE.,
+  lcheck=.FALSE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.False.,
+  ydir='./output/1h_100m',
+  ytunit='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  ncomb=${N_START},${N_STOP},${STEP_6M},
+  yvarml='TOT_PREC',
+  lcheck=.FALSE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.False.,
+  ydir='./output/6min_precip',
+  ytunit='d',
+ /END
+&GRIBOUT
+  yform_write='ncdf',
+  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
+  yvarml= 'VMAX_10M','QV_2M','QCVG_CON','TOT_PR','TOT_SNOW','U_10M', 'V_10M', 'T_2M', 'T_G', 'RELHUM_2M', 'PS', 'TQC','TQI','TQV','CAPE_ML','CIN_ML','HPBL','RUNOFF_S', 'RUNOFF_G'
+  yvarpl=' ',
+  yvarzl=' ',
+  lcheck=.TRUE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.FALSE.,
+  ydir='./output/1h',
+  ytunit='d',
+ /END
+ &GRIBOUT
+ yform_write='ncdf',
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,3,
+  yvarml='',
+  yvarpl='U','V','W','QV','T',
+  plev=200,500,700,850,925,1000,
+  yvarzl=' ',
+  lcheck=.TRUE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.FALSE.,
+  ydir='./output/3h_CORDEX',
+  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
+  l_fi_pmsl_smooth =.FALSE.,
+  ytunit='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},3,
+  yvarml='PMSL', 'TQV', 'TWATER', 'TWATFLXU', 'TWATFLXV'
+  yvarpl=' ',
+  yvarzl=' ',
+  lcheck=.TRUE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.FALSE.,
+  ydir='./output/3h',
+  ytunit='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
+  yvarml='U','V','W','T','QV','QC',
+         'PP',
+         'QS','QR','QI','QG',
+         'VIO3','HMO3','RELHUM',
+         'T_SNOW','QV_S','W_SNOW','W_I','T_S',
+         'T_SO','W_SO','RHO_SNOW','FRESHSNW',
+  yvarpl=' ',
+  yvarzl=' ',
+  lcheck=.FALSE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.TRUE.,
+  ydir='./output',
+  ytunit='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},6,
+  yvarml='PMSL','PS',
+  yvarpl='T','FI','RELHUM','U','V','W',
+  plev = 200,500,700,850,925,1000,
+  yvarzl=' ',
+  lcheck=.TRUE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.FALSE.,
+  ydir='./output/6h',
+  ytunit='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},24,
+  yvarml= 'VABSMX_10M','T_SO','H_SNOW','W_SO', 'W_SNOW', 'TMIN_2M', 'TMAX_2M', 
+  yvarpl=' ',
+  yvarzl=' ',
+  lcheck=.TRUE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.TRUE.,
+  ydir='./output/24h',
+  ytunit='d',
+ /END
+EOF_IO
+cat > INPUT_ORG <<EOF_ORG
+ &LMGRID
+  startlat_tot  = -19.36,
+  startlon_tot  = -23.33,
+  pollat=43.0, pollon=-170.0,
+  dlon=0.11, dlat=0.11,
+  ie_tot= 361, je_tot= 361, ke_tot=60,
+ /END
+ &RUNCTL
+  dt=${DT},
+  hstart=${LM_NL_HSTART},   hstop=${LM_NL_HSTOP},
+  ydate_ini='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000',
+  hincmxt=24.0,
+  hincmxu=1.0,
+  itype_timing=4,
+  lreproduce=.TRUE.,
+  luseobs =.false.,
+  lphys   =.TRUE.,
+  ldiagnos=.FALSE.,
+  ldfi=.FALSE.,
+  nprocx=${NPX}, nprocy=${NPY}, nprocio=${NPIO},
+  nboundlines=3,
+  ldump_ascii = .FALSE.,
+  idbg_level = 2,
+  ncomm_type = 1,
+  l_t_check = .FALSE.,
+ /END
+ &TUNING
+   tkhmin = 0.4,
+   tkmmin = 0.4,
+   mu_rain = 0.5,
+   v0snow = 20.0,
+   rlam_mom=0.0,
+   rlam_heat = 0.5249,
+   entr_sc = 0.000186,
+   rat_sea=20.0,
+   rat_lam=1.0,
+   rat_can=1.0,
+   wichfakt=0.0,
+   c_lnd=2.0,
+   c_sea=1.5,
+   c_soil=1.0,
+   pat_len=500.0,
+   z0m_dia=0.2,
+   crsmin=150.0,
+   clc_diag=0.5,
+   tur_len=500.0,
+   qc0=0.0
+   uc1 = 0.0626,
+   radfac = 0.5,
+   fac_rootdp2 = 1.0,
+   soilhyd = 1.62 ,
+ /END
+EOF_ORG
+cat > INPUT_PHY <<EOF_PHY
+ &PHYCTL
+  lseaice =.false.
+  llake=.false.
+  lgsp    =.true.,
+      itype_gscp=4,
+      ldiniprec=.FALSE., 
+  lrad    =.true.,
+      hincrad = 1.0,
+      lradtopo=.False.,
+  lforest=.TRUE.,
+  ltur    =.true.,
+      ninctura=1,
+      lexpcor=.false.,
+      ltmpcor=.false.,
+      lprfcor=.false.,
+      lnonloc=.false.,
+      lcpfluc=.false.,
+      itype_turb=3,
+      imode_turb=1,
+      itype_tran=2,
+      imode_tran=1,
+      limpltkediff=.True.,
+    itype_wcld=2,
+      icldm_rad=4,
+      icldm_turb=2,
+      icldm_tran=0,
+      itype_synd=2,
+    lsoil=.TRUE.,
+      lmelt=.TRUE.,
+      lmelt_var=.TRUE.,
+      lmulti_layer=.TRUE.,
+      itype_trvg=2,
+      ke_soil=9,
+      czml_soil=0.005, 0.025, 0.07, 0.16, 0.34, 0.70, 1.47, 2.86, 5.74,  11.50,
+      czbot_w_so=8.0,
+      itype_root = 2
+      itype_heatcond=2
+      itype_evsl=4,
+      itype_hydmod=1,
+      itype_hydcond=1,
+      lsoil_init_fill=.FALSE.,  ! Saturate low soil levels; Use only in first month of simualtion
+    lconv=.true.,
+      itype_conv=0,
+      nincconv=5,
+    lcape=.false.,
+      lconf_avg=.true.,
+    lsso=.TRUE.,
+      ltkesso=.False.,
+    itype_albedo = 2,
+    itype_aerosol = 2,
+ /END
+EOF_PHY
+
+cat > job <<EOF_job_SLURM
+#!/bin/tcsh
+#SBATCH --job-name=lm_c_spinup
+#SBATCH --output=job.out
+#SBATCH --nodes=${NNODES}
+#SBATCH --ntasks-per-node=${TASKS_PER_NODE}
+#SBATCH --partition=${QUEUE}
+#SBATCH --time=00:30:00
+#SBATCH --account=${ACCOUNT}
+EOF_job_SLURM
+if [[ $HOST == daint* ]]; then
+  sed -i '/account=/a\
+#SBATCH --constraint=gpu\
+module load daint-gpu\
+setenv CRAY_CUDA_MPS 1' job
+fi
+
+if [ "${GPUS_PER_NODE}" -gt 0 ] ; then
+  sed -i '/account=/a\
+#SBATCH --gres=gpu:'${GPUS_PER_NODE} job
+fi
+
+# rest of job (actual work)
+cat >> job <<EOF_job
+
+# Initialization
+set verbose
+set echo
+
+# set environmental parameters
+setenv OMP_NUM_THREADS 1
+setenv COSMO_NPROC_NODEVICE ${NPIO_LMC}
+setenv MALLOC_MMAP_MAX_ 0
+setenv MALLOC_TRIM_THRESHOLD_ 536870912
+setenv MV2_ENABLE_AFFINITY 0
+setenv MV2_USE_CUDA 1
+setenv MPICH_RDMA_ENABLED_CUDA 1
+setenv MPICH_G2G_PIPELINE 256
+setenv CRAY_CUDA_PROXY 0
+setenv CUDA_VA_RESERVATION_CHUNK_SIZE 4294967296
+unlimit
+limit
+# cleanup
+./clean
+
+# echo date
+date
+
+# Run LM in case directory
+${RUNCMD} -u -n ${NTASKS} ${EXE}
+
+# echo date
+date
+
+# do postprocessing
+#cd ./output/
+#../../bin/grc
+#cd -
+
+# remove job tag (if present)
+#\rm -f .jobid >&/dev/null
+
+# done
+#hook
+pwd
+cd ..
+#python control_simulation.py
+#./run_daint.sh
+cd x_chain
+./run SLURM DEBUG pr04 chaining
+
+EOF_job
+
+# clean away old *.out files
+\rm -f *.out 2>/dev/null
+
+# submit job
+if [ -z "${WAITFORJOB}" ]; then
+  jobid=`sbatch -C gpu job | sed 's/Submitted batch job //g'`
+else
+  jobid=`sbatch -C gpu --dependency=after:${WAITFORJOB} job | sed 's/Submitted batch job //g'`
+fi
+
+if [ $? -eq 0 -a -n "${jobid}" ]; then
+  echo "${jobid}" > .jobid
+  echo "${jobid}"
+else
+  exit 1
+fi
