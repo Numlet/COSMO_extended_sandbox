@@ -2,7 +2,7 @@
 
 ## Extended version of the Sandbox to run the COSMO chain
 
-## Setup and run a chained simulation
+### Setup and run a chained simulation
 
 1-Copy the executables into the bin/ folder. The current standard executables can be found in /store/c2sm/pr04/jvergara/base_executables
 
