@@ -1,24 +1,20 @@
 # README
 
-## COSMO installation
+## Extended version of the Sandbox to run the COSMO chain
 
-Tutorial located at https://github.com/PallasKat/buildenv/wiki/Build-COSMO-POMPA
+## Setup and run a chained simulation
 
-## Setup the python environment
+1-Copy the executables into the bin/ folder. The current standard executables can be found in /store/c2sm/pr04/jvergara/base_executables
 
-To install the python environment with miniconda, use the `install.sh` script in `pythonenv`
+2-Edit define_simulation.py to set the steps of the simulation.
 
-    cd pythonenv
- 
-To see all available option
- 
-    ./install.sh -h
-    
-To install with the defaults and installing a module and append the path to your bashrc
+3-Run it with "python define_simulation.py"
 
-    ./install.sh -i -a
-    
-You can then do the following to activate environment
+4-Run "python control_simulation.py" which will set the values needed for running the next step
 
-    module load miniconda
-    source activate dyn
+5-Check that in run_daint.sh the "parts" variable contains the steps necessary for the simulation and that the last step is x_chain (if you want to automatically chain your simulation)
+
+6-Execute "./run_daint"
+
+7-Enjoy! 
+
