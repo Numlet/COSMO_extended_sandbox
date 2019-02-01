@@ -1,5 +1,8 @@
 #!/bin/bash
-
+[ -z "$1"          ] && SCHEDULER="SLURM" || SCHEDULER="$1"
+[ -z "$2"          ] && QUEUE="normal"   || QUEUE="$2"
+[ -z "$3"          ] && ACCOUNT="ch4"     || ACCOUNT="$3"
+[ -z "$4"          ] && WAITFORJOB=""     || WAITFORJOB="$4"
 
 if [ -z "$4" ]; then
   WAITFORJOB=""
@@ -14,8 +17,9 @@ cat > job <<EOF_job
 #SBATCH --job-name=x_chain
 #SBATCH --output=job.out
 #SBATCH --time=00:05:00
-#SBATCH --ntasks=1
+#SBATCH --nodes=1
 #SBATCH --partition=normal
+#SBATCH --account=${ACCOUNT}
 module unload xalt
 
 cd ..
@@ -31,8 +35,12 @@ else
 fi
 EOF_job
 
-
-jobid=`sbatch -C gpu job | sed 's/Submitted batch job //g'`
+if [ -z "${WAITFORJOB}" ]; then
+  jobid=`sbatch -C gpu job | sed 's/Submitted batch job //g'`
+else
+  jobid=`sbatch -C gpu --dependency=afterany:${WAITFORJOB} job | sed 's/Submitted batch job //g'`
+fi
+#jobid=`sbatch -C gpu job | sed 's/Submitted batch job //g'`
 
 if [ $? -eq 0 -a -n "${jobid}" ]; then
   echo "${jobid}" > .jobid
