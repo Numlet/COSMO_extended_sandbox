@@ -132,9 +132,10 @@ for i in range(len(dataframe)):
     
                 lm_c_jobid=subprocess.run(['sbatch run_compress.sh lm_c'],stdout=subprocess.PIPE,shell=True)
                 lm_f_jobid=subprocess.run(['sbatch run_compress.sh lm_f'],stdout=subprocess.PIPE,shell=True)
-                print(lm_c_jobid,str(lm_c_jobid.stdout[-9:-2])[2:-1])
-                os.system('sbatch --dependency=afterok:%s sync_out.sh output/lm_c %s'%(str(lm_c_jobid.stdout[-9:-2])[2:-1],saving_folder))
-                os.system('sbatch --dependency=afterok:%s sync_out.sh output/lm_f %s'%(str(lm_f_jobid.stdout[-9:-2])[2:-1],saving_folder))
+                print(lm_c_jobid,str(lm_c_jobid.stdout[-9:-1])[2:-1])
+                print('sbatch --dependency=afterok:%s sync_out.sh output/lm_c %s'%(str(lm_c_jobid.stdout[-9:-1])[2:-1],saving_folder))
+                os.system('sbatch --dependency=afterok:%s sync_out.sh output/lm_c %s'%(str(lm_c_jobid.stdout[-9:-1])[2:-1],saving_folder))
+                os.system('sbatch --dependency=afterok:%s sync_out.sh output/lm_f %s'%(str(lm_f_jobid.stdout[-9:-1])[2:-1],saving_folder))
 
 
 
@@ -167,7 +168,7 @@ for i in range(len(dataframe)):
             dataframe.to_csv(name_control_dataframe,mode = 'w',sep="\t", index=False)    
 #            sys.exit(1)
             break
-    
+        if i==len(dataframe)-1:dataframe.to_csv(name_control_dataframe,mode = 'w',sep="\t", index=False) 
     #IF not submited, submit
     if dataframe['status'][i]==0:
         d_str=create_datetime(dataframe['start_date'][i])
