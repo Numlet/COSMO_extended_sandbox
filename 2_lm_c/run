@@ -397,8 +397,8 @@ setenv MPICH_RDMA_ENABLED_CUDA 1
 setenv MPICH_G2G_PIPELINE 256
 setenv CRAY_CUDA_PROXY 0
 setenv CUDA_VA_RESERVATION_CHUNK_SIZE 4294967296
-unlimit
-limit
+#unlimit
+#limit
 # cleanup
 ./clean
 
