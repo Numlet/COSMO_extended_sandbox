@@ -115,7 +115,7 @@ EOF_INI
 cat > INPUT_IO <<EOF_IO
  &IOCTL
   yform_read='ncdf',
-  ngribout = 8,
+  ngribout = 9,
   nhour_restart=${LM_NL_HSTOP},${LM_NL_HSTOP},1
   ytunit_restart = 'd',
   ydir_restart_in='./output/restarts'
@@ -194,6 +194,23 @@ cat > INPUT_IO <<EOF_IO
   luvmasspoint=.FALSE.,
   lwrite_const=.FALSE.,
   ydir='./output/1h',
+  ytunit='d',
+ /END
+  &GRIBOUT
+  yform_write='ncdf',
+  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
+  yvarml='U','V','W','T','QV','QC',
+         'PP',
+         'QS','QR','QI','QG',
+         'VIO3','HMO3','RELHUM',
+         'T_SNOW','QV_S','W_SNOW','W_I','T_S',
+         'T_SO','W_SO','RHO_SNOW','FRESHSNW',
+  yvarpl=' ',
+  yvarzl=' ',
+  lcheck=.FALSE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.TRUE.,
+  ydir='./output',
   ytunit='d',
  /END
  &GRIBOUT
