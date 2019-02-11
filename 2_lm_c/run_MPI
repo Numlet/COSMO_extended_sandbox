@@ -432,8 +432,8 @@ pwd
 cd ..
 #python control_simulation.py
 #./run_daint.sh
-cd x_chain
-./run SLURM DEBUG pr04 chaining
+#cd x_chain
+#./run SLURM DEBUG pr04 chaining
 
 EOF_job
 
