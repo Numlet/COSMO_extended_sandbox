@@ -386,9 +386,7 @@ cat > job <<EOF_job_SLURM
 EOF_job_SLURM
 if [[ $HOST == daint* ]]; then
   sed -i '/account=/a\
-#SBATCH --constraint=gpu\
-module load daint-gpu\
-setenv CRAY_CUDA_MPS 1' job
+#SBATCH --constraint=gpu' job
 fi
 
 if [ "${GPUS_PER_NODE}" -gt 0 ] ; then
@@ -404,16 +402,25 @@ set verbose
 set echo
 
 # set environmental parameters
+module load daint-gpu
 setenv OMP_NUM_THREADS 1
 setenv COSMO_NPROC_NODEVICE ${NPIO_LMC}
-setenv MALLOC_MMAP_MAX_ 0
-setenv MALLOC_TRIM_THRESHOLD_ 536870912
-setenv MV2_ENABLE_AFFINITY 0
-setenv MV2_USE_CUDA 1
+if ( daint104.cscs.ch =~ daint* ) then
 setenv MPICH_RDMA_ENABLED_CUDA 1
 setenv MPICH_G2G_PIPELINE 256
-setenv CRAY_CUDA_PROXY 0
+setenv CRAY_CUDA_MPS 1
 setenv CUDA_VA_RESERVATION_CHUNK_SIZE 4294967296
+else
+setenv MV2_USE_GPUDIRECT 0
+setenv G2G 1
+setenv MV2_IBA_EAGER_THRESHOLD 0
+setenv MV2_SMP_EAGER_THRESHOLD 0
+endif
+# For CLE, according to infos of JPG
+setenv MALLOC_MMAP_MAX_ 0
+setenv MALLOC_TRIM_THRESHOLD_ 536870912
+
+
 #unlimit
 #limit
 # cleanup
