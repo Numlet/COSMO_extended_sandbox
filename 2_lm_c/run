@@ -71,7 +71,7 @@ cat > INPUT_DYN <<EOF_DYN
       nrdtau=10,
     lcpp_dycore=.TRUE.,
     lexpl_lbc=.true.,
-      rlwidth=85000.0,
+      rlwidth=170000.0,
     ldyn_bbc=.false.,
     itype_bbc_w=114,
     betasw=0.4,
@@ -115,7 +115,7 @@ EOF_INI
 cat > INPUT_IO <<EOF_IO
  &IOCTL
   yform_read='ncdf',
-  ngribout = 8,
+  ngribout = 7,
   nhour_restart=${LM_NL_HSTOP},${LM_NL_HSTOP},1
   ytunit_restart = 'd',
   ydir_restart_in='./output/restarts'
@@ -174,16 +174,6 @@ cat > INPUT_IO <<EOF_IO
   ydir='./output/1h_100m',
   ytunit='d',
  /END
- &GRIBOUT
-  yform_write='ncdf',
-  ncomb=${N_START},${N_STOP},${STEP_6M},
-  yvarml='TOT_PREC',
-  lcheck=.FALSE.,
-  luvmasspoint=.FALSE.,
-  lwrite_const=.False.,
-  ydir='./output/6min_precip',
-  ytunit='d',
- /END
 &GRIBOUT
   yform_write='ncdf',
   hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
@@ -194,6 +184,23 @@ cat > INPUT_IO <<EOF_IO
   luvmasspoint=.FALSE.,
   lwrite_const=.FALSE.,
   ydir='./output/1h',
+  ytunit='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
+  yvarml='U','V','W','T','QV','QC',
+         'PP',
+         'QS','QR','QI','QG',
+         'VIO3','HMO3','RELHUM',
+         'T_SNOW','QV_S','W_SNOW','W_I','T_S',
+         'T_SO','W_SO','RHO_SNOW','FRESHSNW',
+  yvarpl=' ',
+  yvarzl=' ',
+  lcheck=.FALSE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.TRUE.,
+  ydir='./output',
   ytunit='d',
  /END
  &GRIBOUT
@@ -209,18 +216,6 @@ cat > INPUT_IO <<EOF_IO
   ydir='./output/3h_CORDEX',
   l_z_filter=.FALSE.,l_p_filter=.FALSE.,
   l_fi_pmsl_smooth =.FALSE.,
-  ytunit='d',
- /END
- &GRIBOUT
-  yform_write='ncdf',
-  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},3,
-  yvarml='PMSL', 'TQV', 'TWATER', 'TWATFLXU', 'TWATFLXV'
-  yvarpl=' ',
-  yvarzl=' ',
-  lcheck=.TRUE.,
-  luvmasspoint=.FALSE.,
-  lwrite_const=.FALSE.,
-  ydir='./output/3h',
   ytunit='d',
  /END
  &GRIBOUT
@@ -272,7 +267,7 @@ cat > INPUT_ORG <<EOF_ORG
   nprocx=${NPX}, nprocy=${NPY}, nprocio=${NPIO},
   nboundlines=3,
   ldump_ascii = .FALSE.,
-  idbg_level = 2,
+  idbg_level = 20,
   ncomm_type = 1,
   l_t_check = .FALSE.,
  /END
@@ -359,12 +354,12 @@ EOF_PHY
 
 cat > job <<EOF_job_SLURM
 #!/bin/tcsh
-#SBATCH --job-name=lm_c_spinup
+#SBATCH --job-name=lm_c_MPI_ff
 #SBATCH --output=job.out
 #SBATCH --nodes=${NNODES}
 #SBATCH --ntasks-per-node=${TASKS_PER_NODE}
 #SBATCH --partition=${QUEUE}
-#SBATCH --time=00:30:00
+#SBATCH --time=03:00:00
 #SBATCH --account=${ACCOUNT}
 EOF_job_SLURM
 if [[ $HOST == daint* ]]; then
@@ -397,8 +392,13 @@ setenv MPICH_RDMA_ENABLED_CUDA 1
 setenv MPICH_G2G_PIPELINE 256
 setenv CRAY_CUDA_PROXY 0
 setenv CUDA_VA_RESERVATION_CHUNK_SIZE 4294967296
-unlimit
-limit
+
+
+setenv MV2_USE_GPUDIRECT 0
+setenv G2G 1
+setenv MV2_IBA_EAGER_THRESHOLD 0
+setenv MV2_SMP_EAGER_THRESHOLD 0
+
 # cleanup
 ./clean
 
@@ -425,8 +425,6 @@ pwd
 cd ..
 #python control_simulation.py
 #./run_daint.sh
-#cd x_chain
-#./run SLURM DEBUG pr04 chaining
 
 EOF_job
 
