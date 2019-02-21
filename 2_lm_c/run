@@ -289,7 +289,7 @@ cat > INPUT_ORG <<EOF_ORG
   nprocx=${NPX}, nprocy=${NPY}, nprocio=${NPIO},
   nboundlines=3,
   ldump_ascii = .FALSE.,
-  idbg_level = 2,
+  idbg_level = 200,
   ncomm_type = 1,
   l_t_check = .FALSE.,
  /END
@@ -376,12 +376,12 @@ EOF_PHY
 
 cat > job <<EOF_job_SLURM
 #!/bin/tcsh
-#SBATCH --job-name=lm_c_spinup
+#SBATCH --job-name=lm_c_GA
 #SBATCH --output=job.out
 #SBATCH --nodes=${NNODES}
 #SBATCH --ntasks-per-node=${TASKS_PER_NODE}
 #SBATCH --partition=${QUEUE}
-#SBATCH --time=00:30:00
+#SBATCH --time=04:30:00
 #SBATCH --account=${ACCOUNT}
 EOF_job_SLURM
 if [[ $HOST == daint* ]]; then
@@ -402,7 +402,7 @@ cat >> job <<EOF_job
 # Initialization
 set verbose
 set echo
-
+module load daint-gpu
 # set environmental parameters
 setenv OMP_NUM_THREADS 1
 setenv COSMO_NPROC_NODEVICE ${NPIO_LMC}
@@ -414,6 +414,13 @@ setenv MPICH_RDMA_ENABLED_CUDA 1
 setenv MPICH_G2G_PIPELINE 256
 setenv CRAY_CUDA_PROXY 0
 setenv CUDA_VA_RESERVATION_CHUNK_SIZE 4294967296
+
+
+setenv MV2_USE_GPUDIRECT 0
+setenv G2G 1
+setenv MV2_IBA_EAGER_THRESHOLD 0
+setenv MV2_SMP_EAGER_THRESHOLD 0
+
 #unlimit
 #limit
 # cleanup
