@@ -39,12 +39,12 @@ def edit_and_submit_run(d_ini,d_str,h_str,h_end):
 #    os.system("sbatch chain_simulation.sh")
     if os.path.isfile('2_lm_c/job.out'): 
 #        a=os.system('cp 2_lm_c/job.out job.lm_c.out.%s'%d_str.isoformat()[:10])
-        a=os.system('cp 2_lm_c/job.out 2_lm_c/job.lm_c.out.%s'%d_str.isoformat()[:10])
+        a=os.system('cp 2_lm_c/job.out 2_lm_c/output/job_logs/job.lm_c.out.%s'%d_str.isoformat()[:10])
     else:
         print('2_lm_c/job.out file did not exist')
     if os.path.isfile('4_lm_f/job.out'):
 #        a=os.system('cp 4_lm_f/job.out job.lm_f.out.%s'%d_str.isoformat()[:10])
-        a=os.system('cp 4_lm_f/job.out 4_lm_f/job.lm_f.out.%s'%d_str.isoformat()[:10])
+        a=os.system('cp 4_lm_f/job.out 4_lm_f/output/job_logs/job.lm_f.out.%s'%d_str.isoformat()[:10])
     else:
         print('4_lm_f/job.out file did not exist')
     #a=os.system('./run_daint.sh')
