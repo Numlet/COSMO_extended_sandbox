@@ -290,7 +290,7 @@ cat > INPUT_ORG <<EOF_ORG
   num_iope_percomm=1,
   nboundlines=3,
   ldump_ascii = .FALSE.,
-  idbg_level = 3,
+  idbg_level = 300,
   l_t_check = .FALSE.,
  /END
  &TUNING
@@ -380,12 +380,12 @@ EOF_PHY
 # setup job
 cat > job <<EOF_job_SLURM
 #!/bin/tcsh
-#SBATCH --job-name=lm_f_test
+#SBATCH --job-name=lm_f_GA
 #SBATCH --output=job.out
 #SBATCH --nodes=${NNODES}
 #SBATCH --ntasks-per-node=${TASKS_PER_NODE}
 #SBATCH --partition=${QUEUE}
-#SBATCH --time=00:30:00
+#SBATCH --time=04:30:00
 #SBATCH --account=${ACCOUNT}
 EOF_job_SLURM
 
@@ -426,7 +426,7 @@ setenv CUDA_VA_RESERVATION_CHUNK_SIZE 4294967296
 
 # echo date
 date
-
+sleep 300
 # Run LM in case directory
 ${RUNCMD} -u -n ${NTASKS} ${EXE}
 
@@ -442,8 +442,6 @@ date
 ## remove job tag (if present)
 #\rm -f .jobid >&/dev/null
 cd ..
-cd x_chain
-./run SLURM NORMAL pr04 chaining
 
 # done
 EOF_job

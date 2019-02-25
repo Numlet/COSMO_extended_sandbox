@@ -381,7 +381,7 @@ cat > job <<EOF_job_SLURM
 #SBATCH --nodes=${NNODES}
 #SBATCH --ntasks-per-node=${TASKS_PER_NODE}
 #SBATCH --partition=${QUEUE}
-#SBATCH --time=04:30:00
+#SBATCH --time=02:30:00
 #SBATCH --account=${ACCOUNT}
 EOF_job_SLURM
 if [[ $HOST == daint* ]]; then
