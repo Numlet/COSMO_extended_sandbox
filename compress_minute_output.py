@@ -41,8 +41,10 @@ for day in daily_list:
     print(out)
     if not out and Dataset('day_lffd'+day+'.nc').dimensions["time"].size==240:
         os.system('rm -rf lffd'+day+'??????.nc')
-    elif Dataset('day_lffd'+day+'.nc').dimensions["time"].size>240:
-        raise NameError('Nota all output is available or data concatenated more than once')
+    else:
+        print('Nota all output is available or data concatenated more than once')
+        print('Mantaining original output and removing day_lffd file')
+        os.system('rm -rf day_lffd'+day+'.nc')
     t2=time.time()
     print(t2-t1)
     #break
