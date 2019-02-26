@@ -122,7 +122,8 @@ cat > INPUT_IO <<EOF_IO
  &IOCTL
   yform_read='ncdf',
   ngribout = 8,
-  nmaxwait = 300,
+  nincwait = 30
+  nmaxwait = 60,
   nhour_restart=${LM_NL_HSTOP},${LM_NL_HSTOP},1
   ytunit_restart = 'd',
   ydir_restart_in='./output/restarts'
