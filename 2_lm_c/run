@@ -160,17 +160,17 @@ cat > INPUT_IO <<EOF_IO
   l_fi_pmsl_smooth =.FALSE.,
   ytunit='d',
  /END 
- &GRIBOUT		
-   yform_write='ncdf',		
-   ncomb=${N_START},${N_STOP},${STEP_6M},		
-   yvarml='TOT_PREC',		
-   lcheck=.FALSE.,		
-   luvmasspoint=.FALSE.,		
-   lwrite_const=.False.,		
-   ydir='./output/6min_precip',		
-   ytunit='d',		
-  /END
  &GRIBOUT
+   yform_write='ncdf',
+   ncomb=${N_START},${N_STOP},${STEP_6M},
+   yvarml='TOT_PREC',
+   lcheck=.FALSE.,
+   luvmasspoint=.FALSE.,
+   lwrite_const=.False.,
+   ydir='./output/6min_precip',
+   ytunit='d',
+  /END
+  &GRIBOUT
   yform_write='ncdf',
   hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
   yvarml=' ',
