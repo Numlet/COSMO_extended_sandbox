@@ -196,7 +196,7 @@ cat > INPUT_IO <<EOF_IO
   ydir='./output/1h',
   ytunit='d',
  /END
-  &GRIBOUT
+ &GRIBOUT
   yform_write='ncdf',
   hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
   yvarml='U','V','W','T','QV','QC',
@@ -215,19 +215,14 @@ cat > INPUT_IO <<EOF_IO
  /END
  &GRIBOUT
   yform_write='ncdf',
-  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
-  yvarml='U','V','W','T','QV','QC',
-         'PP',
-         'QS','QR','QI','QG',
-         'VIO3','HMO3','RELHUM',
-         'T_SNOW','QV_S','W_SNOW','W_I','T_S',
-         'T_SO','W_SO','RHO_SNOW','FRESHSNW',
+  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},3,
+  yvarml='PMSL', 'TQV', 'TWATER', 'TWATFLXU', 'TWATFLXV'
   yvarpl=' ',
   yvarzl=' ',
-  lcheck=.FALSE.,
+  lcheck=.TRUE.,
   luvmasspoint=.FALSE.,
-  lwrite_const=.TRUE.,
-  ydir='./output',
+  lwrite_const=.FALSE.,
+  ydir='./output/3h',
   ytunit='d',
  /END
  &GRIBOUT
