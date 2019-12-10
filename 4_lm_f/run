@@ -381,21 +381,21 @@ EOF_PHY
 
 # setup job
 cat > job <<EOF_job_SLURM
-#!/bin/tcsh
+#!/bin/bash
 #SBATCH --job-name=lm_f_GA
 #SBATCH --output=job.out
 #SBATCH --nodes=${NNODES}
 #SBATCH --ntasks-per-node=${TASKS_PER_NODE}
 #SBATCH --partition=${QUEUE}
-#SBATCH --time=04:30:00
+#SBATCH --time=00:30:00
 #SBATCH --account=${ACCOUNT}
 EOF_job_SLURM
 
 if [[ $HOST == daint* ]]; then
   sed -i '/account=/a\
 #SBATCH --constraint=gpu\
-module load daint-gpu\
-setenv CRAY_CUDA_MPS 1' job
+#module load daint-gpu\
+' job
 fi
 
 if [ "${GPUS_PER_NODE}" -gt 0 ] ; then
@@ -421,6 +421,10 @@ setenv MPICH_RDMA_ENABLED_CUDA 1
 setenv MPICH_G2G_PIPELINE 256
 setenv CRAY_CUDA_PROXY 0
 setenv CUDA_VA_RESERVATION_CHUNK_SIZE 4294967296
+
+
+module load cudatoolkit
+
 #unlimit
 #limit
 # cleanup
@@ -428,9 +432,18 @@ setenv CUDA_VA_RESERVATION_CHUNK_SIZE 4294967296
 
 # echo date
 date
-sleep 120
+sleep 20
 # Run LM in case directory
 ${RUNCMD} -u -n ${NTASKS} ${EXE}
+
+
+if [[  \$? -eq 0 ]]; then
+    echo "compressing minute output"
+    python ../compress_minute_output.py
+else
+    echo "simulation failed"
+fi
+
 
 # echo date
 date

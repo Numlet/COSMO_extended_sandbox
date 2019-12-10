@@ -130,12 +130,14 @@ for i in range(len(dataframe)):
 #                os.system('cd postprocessing && ./run')
 #                os.system('rsync -aq output/ %s'%saving_folder)
     
-                lm_c_jobid=subprocess.run(['sbatch run_compress.sh lm_c'],stdout=subprocess.PIPE,shell=True)
-                lm_f_jobid=subprocess.run(['sbatch run_compress.sh lm_f'],stdout=subprocess.PIPE,shell=True)
-                print(lm_c_jobid,str(lm_c_jobid.stdout[-9:-1])[2:-1])
-                print('sbatch --dependency=afterok:%s sync_out.sh output/lm_c %s'%(str(lm_c_jobid.stdout[-9:-1])[2:-1],saving_folder))
-                os.system('sbatch --dependency=afterok:%s sync_out.sh output/lm_c %s'%(str(lm_c_jobid.stdout[-9:-1])[2:-1],saving_folder))
-                os.system('sbatch --dependency=afterok:%s sync_out.sh output/lm_f %s'%(str(lm_f_jobid.stdout[-9:-1])[2:-1],saving_folder))
+#                lm_c_jobid=subprocess.run(['sbatch run_compress.sh lm_c'],stdout=subprocess.PIPE,shell=True)
+#                lm_f_jobid=subprocess.run(['sbatch run_compress.sh lm_f'],stdout=subprocess.PIPE,shell=True)
+                #print(lm_c_jobid,str(lm_c_jobid.stdout[-9:-1])[2:-1])
+                #print('sbatch --dependency=afterok:%s sync_out.sh output/lm_c %s'%(str(lm_c_jobid.stdout[-9:-1])[2:-1],saving_folder))
+                #os.system('sbatch --dependency=afterok:%s sync_out.sh output/lm_c %s'%(str(lm_c_jobid.stdout[-9:-1])[2:-1],saving_folder))
+                os.system('sbatch sync_out.sh output/lm_c %s'%(saving_folder))
+               # os.system('sbatch --dependency=afterok:%s sync_out.sh output/lm_f %s'%(str(lm_f_jobid.stdout[-9:-1])[2:-1],saving_folder))
+                os.system('sbatch sync_out.sh output/lm_f %s'%(saving_folder))
 
 
 

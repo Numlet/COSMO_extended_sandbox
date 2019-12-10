@@ -5,13 +5,13 @@
 bd_data=/project/pr04/ERAinterim/${LM_YYYY_BEGIN}/ERAINT_${LM_YYYY_BEGIN}_${LM_MM_BEGIN}.tar.gz
 next_date=$(date -d "${LM_YYYY_BEGIN}-${LM_MM_BEGIN}-01 1 month" +%Y-%m-%d )
 
-echo ${LM_YYYY_BEGIN}_${LM_MM_BEGIN}
-echo $next_date
+#echo ${LM_YYYY_BEGIN}_${LM_MM_BEGIN}
+#echo $next_date
 
 LM_YYYY_NEXT=$(echo $next_date |colrm 5)
 LM_MM_NEXT=$(echo $next_date |colrm 8| tail -c 3)
-echo $LM_YYYY_NEXT
-echo $LM_MM_NEXT
+#echo $LM_YYYY_NEXT
+#echo $LM_MM_NEXT
 bd_data_next=/project/pr04/ERAinterim/${LM_YYYY_NEXT}/ERAINT_${LM_YYYY_NEXT}_${LM_MM_NEXT}.tar.gz
 
 
@@ -20,18 +20,18 @@ bd_data_next=/project/pr04/ERAinterim/${LM_YYYY_NEXT}/ERAINT_${LM_YYYY_NEXT}_${L
 
 prev_date=$(date -d "${LM_YYYY_BEGIN}-${LM_MM_BEGIN}-01 -1 month" +%Y-%m-%d )
 
-echo ${LM_YYYY_BEGIN}_${LM_MM_BEGIN}
-echo $prev_date
+#echo ${LM_YYYY_BEGIN}_${LM_MM_BEGIN}
+#echo $prev_date
 
 LM_YYYY_PREV=$(echo $prev_date |colrm 5)
 LM_MM_PREV=$(echo $prev_date |colrm 8| tail -c 3)
-echo $LM_YYYY_PREV
-echo $LM_MM_PREV
+#echo $LM_YYYY_PREV
+#echo $LM_MM_PREV
 bd_data_prev=/project/pr04/ERAinterim/${LM_YYYY_PREV}/ERAINT_${LM_YYYY_PREV}_${LM_MM_PREV}.tar.gz
 
-echo $bd_data
-echo $bd_data_next
-echo $bd_data_prev
+#echo $bd_data
+#echo $bd_data_next
+#echo $bd_data_prev
 #External Parameters
 extpar_dir=/project/pr04/extpar-HPC
 extpar_file_lm_c=extpar_12km_europe_771x771.nc

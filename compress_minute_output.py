@@ -6,7 +6,10 @@ import Jesuslib_eth as jle
 import numpy as np
 import time
 from netCDF4 import Dataset
-path='output/'+sys.argv[1]+'/6min_precip/'
+if len(sys.argv)>1:
+    path='output/'+sys.argv[1]+'/6min_precip/'
+else:
+    path='output/'+'6min_precip/'
 os.chdir(path)
 
 files=glob.glob('lffd??????????????.nc')

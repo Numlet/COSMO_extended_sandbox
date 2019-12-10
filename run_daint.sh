@@ -1,17 +1,17 @@
 #!/bin/bash
 #cp /store/c2sm/pr04/jvergara/base_executables/* bin/
 
-module load craype-accel-nvidia60
-
-export MALLOC_MMAP_MAX_=0
-export MALLOC_TRIM_THRESHOLD_=536870912
-export OMP_NUM_THREADS=1
-export CDO_EXEC=/apps/daint/UES/jenkins/6.0.UP04/gpu/easybuild/software/CDO/1.9.0-CrayGNU-17.08/bin/cdo
-
-#ulimit -s unlimited
-#ulimit -a
+#module use /apps/common/UES/sandbox/kraushm/easybuild/dom-CLE7.19.09/modules/all
 module load daint-gpu
+
+#module load COSMO_pompa/31d7227-CrayCCE-19.08-cuda-10.0-crclim-double
+module unload cudatoolkit
+module load cudatoolkit/10.0.130_3.22-7.0.1.0_5.2__gdfb4ce5
+
+export MV2_ENABLE_AFFINITY=0
+export MV2_USE_CUDA=1
 export MPICH_RDMA_ENABLED_CUDA=1
+export MPICH_G2G_PIPELINE=256
 
 
 while getopts "o" opt
@@ -75,7 +75,8 @@ jobid=""
 lmfid=""
 pwd
 #parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f 5_trajectories 6_climate_analysis 7_msd 8_front_tracking"
-parts="0_get_data 1_ifs2lm 2_lm_c x_chain"
+parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f  x_chain"
+#parts="0_get_data"
 #parts="2_lm_c"
 #parts="3_lm2lm 4_lm_f"
 #parts="4_lm_f"
@@ -99,5 +100,7 @@ for part in ${parts} ; do
    then
     jobid=$lmfid
   fi
+  echo "${short} ${jobid}"
+  
   cd - 1>/dev/null 2>/dev/null
 done
