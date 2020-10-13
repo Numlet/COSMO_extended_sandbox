@@ -2,7 +2,7 @@
 
 
 
-bd_data=/project/pr04/ERAinterim/${LM_YYYY_BEGIN}/ERAINT_${LM_YYYY_BEGIN}_${LM_MM_BEGIN}.tar.gz
+bd_data=/project/pr94/ERAinterim/${LM_YYYY_BEGIN}/ERAINT_${LM_YYYY_BEGIN}_${LM_MM_BEGIN}.tar.gz
 next_date=$(date -d "${LM_YYYY_BEGIN}-${LM_MM_BEGIN}-01 1 month" +%Y-%m-%d )
 
 #echo ${LM_YYYY_BEGIN}_${LM_MM_BEGIN}
@@ -12,7 +12,7 @@ LM_YYYY_NEXT=$(echo $next_date |colrm 5)
 LM_MM_NEXT=$(echo $next_date |colrm 8| tail -c 3)
 #echo $LM_YYYY_NEXT
 #echo $LM_MM_NEXT
-bd_data_next=/project/pr04/ERAinterim/${LM_YYYY_NEXT}/ERAINT_${LM_YYYY_NEXT}_${LM_MM_NEXT}.tar.gz
+bd_data_next=/project/pr94/ERAinterim/${LM_YYYY_NEXT}/ERAINT_${LM_YYYY_NEXT}_${LM_MM_NEXT}.tar.gz
 
 
 
@@ -27,13 +27,13 @@ LM_YYYY_PREV=$(echo $prev_date |colrm 5)
 LM_MM_PREV=$(echo $prev_date |colrm 8| tail -c 3)
 #echo $LM_YYYY_PREV
 #echo $LM_MM_PREV
-bd_data_prev=/project/pr04/ERAinterim/${LM_YYYY_PREV}/ERAINT_${LM_YYYY_PREV}_${LM_MM_PREV}.tar.gz
+bd_data_prev=/project/pr94/ERAinterim/${LM_YYYY_PREV}/ERAINT_${LM_YYYY_PREV}_${LM_MM_PREV}.tar.gz
 
 #echo $bd_data
 #echo $bd_data_next
 #echo $bd_data_prev
 #External Parameters
-extpar_dir=/project/pr04/extpar-HPC
+extpar_dir=/project/pr94/extpar-HPC
 extpar_file_lm_c=extpar_12km_europe_771x771.nc
 extpar_file_lm_f=extpar_2km_europe_2313x2313.nc
 
@@ -45,7 +45,7 @@ cat > job <<EOF_job
 #SBATCH --time=01:00:00
 #SBATCH --ntasks=1
 #SBATCH --partition=xfer
-module unload xalt
+#module unload xalt
 
 #Create Output directory
 if [ ! -d ../input/ifs2lm ] ; then mkdir -p ../input/ifs2lm ; fi
@@ -68,7 +68,8 @@ cd ..
 #    ./run_daint.sh
 #    rm do
 #fi
-
+sacct -j \$SLURM_JOB_ID --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist,AveC
+PUFreq
 #./run_daint.sh
 EOF_job
 
@@ -80,6 +81,7 @@ fi
 # clean away old *.out files
 \rm -f *.out 2>/dev/null
 chmod u+x job
+module unload xalt
 # submit job
 jobid=`sbatch -C gpu -n 1 job | sed 's/Submitted batch job //g'`
 

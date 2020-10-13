@@ -1,12 +1,12 @@
 #!/bin/bash
-#cp /store/c2sm/pr04/jvergara/base_executables/* bin/
+#cp /store/c2sm/pr94/jvergara/base_executables/* bin/
 
 #module use /apps/common/UES/sandbox/kraushm/easybuild/dom-CLE7.19.09/modules/all
 module load daint-gpu
 
 #module load COSMO_pompa/31d7227-CrayCCE-19.08-cuda-10.0-crclim-double
-module unload cudatoolkit
-module load cudatoolkit/10.0.130_3.22-7.0.1.0_5.2__gdfb4ce5
+#module unload cudatoolkit
+#module load cudatoolkit/10.0.130_3.22-7.0.1.0_5.2__gdfb4ce5
 
 export MV2_ENABLE_AFFINITY=0
 export MV2_USE_CUDA=1
@@ -24,8 +24,8 @@ done
 NAME_RUN="testing_sandbox"
 
 export SCHEDULER="SLURM"
-export QUEUE="normal"
-export ACCOUNT="pr04"
+export QUEUE="debug"
+export ACCOUNT="pr94"
 export RUNCMD="srun"
 export CORES_PER_NODE=24
 export TASKS_PER_NODE=1
@@ -76,7 +76,7 @@ lmfid=""
 pwd
 #parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f 5_trajectories 6_climate_analysis 7_msd 8_front_tracking"
 parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f  x_chain"
-#parts="0_get_data"
+parts="0_get_data"
 #parts="2_lm_c"
 #parts="3_lm2lm 4_lm_f"
 #parts="4_lm_f"

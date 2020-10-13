@@ -289,7 +289,7 @@ cat > INPUT_ORG <<EOF_ORG
   nprocx=${NPX}, nprocy=${NPY}, nprocio=${NPIO},
   nboundlines=3,
   ldump_ascii = .FALSE.,
-  idbg_level = 20,
+  idbg_level = 200,
   ncomm_type = 1,
   l_t_check = .FALSE.,
  /END
@@ -453,7 +453,8 @@ pwd
 cd ..
 #python control_simulation.py
 #./run_daint.sh
-
+sacct -j \$SLURM_JOB_ID --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist,AveC
+PUFreq
 EOF_job
 
 # clean away old *.out files

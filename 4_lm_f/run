@@ -7,7 +7,7 @@
 [ -z "${EXE_LMF}"  ] && EXE=lm_f90        || EXE=${EXE_LMF}
 [ -z "$1"          ] && SCHEDULER="SLURM" || SCHEDULER="$1"
 [ -z "$2"          ] && QUEUE="normal"   || QUEUE="$2"
-[ -z "$3"          ] && ACCOUNT="pr04"     || ACCOUNT="$3"
+[ -z "$3"          ] && ACCOUNT="pr94"     || ACCOUNT="$3"
 [ -z "$4"          ] && WAITFORJOB=""     || WAITFORJOB="$4"
 
 if [ -z "$CORES_PER_NODE" ] ; then
@@ -457,7 +457,8 @@ date
 ## remove job tag (if present)
 #\rm -f .jobid >&/dev/null
 cd ..
-
+sacct -j \$SLURM_JOB_ID --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist,AveC
+PUFreq
 # done
 EOF_job
 

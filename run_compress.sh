@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --partition=normal
 #SBATCH --time=03:30:00
-#SBATCH --account=pr04
+#SBATCH --account=pr94
 #SBATCH --constraint=gpu
 
 python compress_minute_output.py $1
