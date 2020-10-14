@@ -75,7 +75,7 @@ jobid=""
 lmfid=""
 pwd
 
-parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f  x_chain"
+parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f x_chain"
 
 for part in ${parts} ; do
   short=`echo "${part}" | sed 's/^[0-9]*_//g'`
