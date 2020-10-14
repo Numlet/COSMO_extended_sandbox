@@ -74,17 +74,9 @@ export FRONTS_TS_END=2006060200
 jobid=""
 lmfid=""
 pwd
-#parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f 5_trajectories 6_climate_analysis 7_msd 8_front_tracking"
+
 parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f  x_chain"
-parts="0_get_data"
-#parts="2_lm_c"
-#parts="3_lm2lm 4_lm_f"
-#parts="4_lm_f"
-#parts="2_lm_c"
-#parts="1_ifs2lm 2_lm_c"
-#parts="1_ifs2lm 2_lm_c"
-#parts='1_ifs2lm'
-#parts="1_ifs2lm"
+
 for part in ${parts} ; do
   short=`echo "${part}" | sed 's/^[0-9]*_//g'`
   number=${part%%_*}
