@@ -7,12 +7,12 @@ This code is prepared to run at Piz Daint from the login nodes. The only **extra
 ## Code structure
 The code is structured in different steps that need to be executed to simulate the standard chain
 
-*0_get_data: Scripts to copy automatically ERA or MPI files
-*1_ifs2lm: Generate 12km boundary conditions from GCM or reanalysis fields. 
-*2_lm_c: Run Cosmo at 12km. 
-*3_lm2lm: Generate high resolution boundary conditions for the nested run. 
-*4_lm_f: Run cosmo at high-resolution (standard 2.2km)
-*x_chain: Check that the simulation step has correctly been performed and resubmit the next step.  
+* 0_get_data: Scripts to copy automatically ERA or MPI files
+* 1_ifs2lm: Generate 12km boundary conditions from GCM or reanalysis fields. 
+* 2_lm_c: Run Cosmo at 12km. 
+* 3_lm2lm: Generate high resolution boundary conditions for the nested run. 
+* 4_lm_f: Run cosmo at high-resolution (standard 2.2km)
+* x_chain: Check that the simulation step has correctly been performed and resubmit the next step.  
 
 ## Simple set up to run chained simulations
 
