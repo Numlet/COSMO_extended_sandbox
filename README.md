@@ -1,8 +1,17 @@
 # COSMO Extended Sandbox
-Extended version of the Sandbox to run the COSMO chain
+Extended version of the Sandbox to run the COSMO chain. Typically this code is used to run high-resolution simulations over the European and alpine regions, but it can be easily adapted to any other region.
 
 ## Requirements
-This code is prepared to run at Piz Daint from the login nodes. The only **extra requirement** is to have **python3** installed, preferable with minconda. 
+This code is prepared to run at Piz Daint from the login nodes. The only **extra requirement** is to have **python3** installed and the list of libraries below ( preferable installed with miniconda).
+
+- pandas
+- subprocess
+- numpy
+- sys
+- os
+- glob
+- calendar
+- netCDF4
 
 ## Code structure
 The code is structured in different steps that need to be executed to simulate the standard chain
