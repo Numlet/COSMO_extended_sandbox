@@ -1,6 +1,9 @@
 # COSMO Extended Sandbox
 Extended version of the Sandbox to run the COSMO chain. Typically this code is used to run high-resolution simulations over the European and alpine regions, but it can be easily adapted to any other region.
 
+##
+TODO soil moisture
+
 ## Requirements
 This code is prepared to run at Piz Daint from the login nodes. The only **extra requirement** is to have **python3** installed and the list of libraries below ( preferable installed with miniconda).
 
